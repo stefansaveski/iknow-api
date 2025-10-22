@@ -1,4 +1,4 @@
-using iknow_api.Data;
+//using iknow_api.Data;
 using iknow_api.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
