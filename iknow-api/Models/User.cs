@@ -16,7 +16,7 @@ namespace iknow_api.Core.Models
         public string? Surname { get; set; }
         public string? Index { get; set; }
         public string? Email { get; set; }
-        public string? Password { get; set; }
+        public string? PasswordHash { get; set; }
         public DateTime Bday { get; set; }
         public DateTime CreatedAt { get; set; }
         public UserRole Role { get; set; }
