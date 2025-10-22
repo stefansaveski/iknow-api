@@ -21,25 +21,31 @@ namespace iknow_api.Services
             _configuration = configuration;
         }
 
-        public async Task<bool> RegisterAsync(UserDto userDto)
+        public async Task<bool> RegisterAsync(RegisterDto registerDto)
         {
-            if (await _userRepository.UserExistsAsync(userDto.Username))
+            if (await _userRepository.UserExistsAsync(registerDto.Email))
                 return false;
 
             var user = new User
             {
-                Email = userDto.Username,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password)
+                Name = registerDto.Name,
+                Surname = registerDto.Surname,
+                Index = registerDto.Index,
+                Email = registerDto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Utc),
+                CreatedAt = DateTime.UtcNow,
+                Role = (Core.Models.UserRole)registerDto.Role
             };
 
             await _userRepository.AddUserAsync(user);
             return true;
         }
 
-        public async Task<string?> LoginAsync(UserDto userDto)
+        public async Task<string?> LoginAsync(LoginDto loginDto)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(userDto.Username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(userDto.Password, user.PasswordHash))
+            var user = await _userRepository.GetUserByUsernameAsync(loginDto.Email);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
                 return null;
 
             return CreateToken(user);
@@ -55,7 +61,8 @@ namespace iknow_api.Services
             var claims = new[]
             {
                 new Claim("id", user.Id.ToString()),
-                new Claim("username", user.Email)
+                new Claim("username", user.Email ?? string.Empty),
+                new Claim("role", user.Role.ToString())
             };
 
             var keyString = _configuration["Jwt:Key"];
@@ -66,10 +73,10 @@ namespace iknow_api.Services
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "finxacces-api",
-                audience: "finxacces-api",
+                issuer: "iknow-api",
+                audience: "iknow-api",
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: creds
             );
 

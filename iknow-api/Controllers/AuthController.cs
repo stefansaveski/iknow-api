@@ -1,7 +1,7 @@
 ﻿using iknow_api.DTOs;
 using iknow_api.Services;
 using Microsoft.AspNetCore.Mvc;
-//test
+
 namespace iknow_api.Controllers
 {
     [ApiController]
@@ -30,7 +30,7 @@ namespace iknow_api.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDto request)
+        public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
             var result = await _authService.RegisterAsync(request);
             if (!result) return BadRequest("User already exists");
@@ -38,7 +38,7 @@ namespace iknow_api.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] UserDto request)
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
             var token = await _authService.LoginAsync(request);
             if (token == null) return Unauthorized("Invalid credentials");

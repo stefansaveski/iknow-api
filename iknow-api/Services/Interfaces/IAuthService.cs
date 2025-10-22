@@ -4,8 +4,8 @@ namespace iknow_api.Services
 {
     public interface IAuthService
     {
-        Task<bool> RegisterAsync(UserDto userDto);
-        Task<string?> LoginAsync(UserDto userDto);
+        Task<bool> RegisterAsync(RegisterDto registerDto);
+        Task<string?> LoginAsync(LoginDto loginDto);
         Task<int> GetUsersCountAsync();
     }
 }
