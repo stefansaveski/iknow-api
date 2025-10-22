@@ -2,13 +2,13 @@
 using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
-using FinXaccesApi.Controllers;
+using iknow_api.Controllers;
 using iknow_api.Core.Models;
-using FinXaccesApi.DTOs;
-using FinXaccesApi.Repositories;
+using iknow_api.DTOs;
+using iknow_api.Repositories;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FinXaccesApi.Services
+namespace iknow_api.Services
 {
     public class AuthService : IAuthService
     {

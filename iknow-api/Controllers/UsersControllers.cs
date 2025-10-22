@@ -2,7 +2,7 @@ using iknow_api.Core.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using iknow_api.Core.Data;
-using FinXaccesApi.Repositories;
+using iknow_api.Repositories;
 using iknow_api.Core.Interfaces;
 
 namespace iknow_api.Controllers

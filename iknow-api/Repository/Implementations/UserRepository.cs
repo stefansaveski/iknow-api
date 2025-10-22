@@ -4,7 +4,7 @@ using iknow_api.Core.Data;
 using iknow_api.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinXaccesApi.Repositories
+namespace iknow_api.Repositories
 {
     public class UserRepository : IUserRepository
     {

@@ -1,7 +1,6 @@
-﻿using FinXaccesApi.Controllers;
-using FinXaccesApi.DTOs;
+﻿using iknow_api.DTOs;
 
-namespace FinXaccesApi.Services
+namespace iknow_api.Services
 {
     public interface IAuthService
     {

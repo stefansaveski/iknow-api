@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using iknow_api.Core.Data;
-using FinXaccesApi.Services;
-using FinXaccesApi.Repositories;
+using iknow_api.Services;
+using iknow_api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

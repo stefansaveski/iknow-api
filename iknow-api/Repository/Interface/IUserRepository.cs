@@ -1,5 +1,5 @@
 using iknow_api.Core.Models;
-namespace FinXaccesApi.Repositories
+namespace iknow_api.Repositories
 {
     public interface IUserRepository
     {

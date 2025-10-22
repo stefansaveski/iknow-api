@@ -1,8 +1,8 @@
-﻿using FinXaccesApi.DTOs;
-using FinXaccesApi.Services;
+﻿using iknow_api.DTOs;
+using iknow_api.Services;
 using Microsoft.AspNetCore.Mvc;
 //test
-namespace FinXaccesApi.Controllers
+namespace iknow_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
