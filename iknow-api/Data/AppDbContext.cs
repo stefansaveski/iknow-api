@@ -1,10 +1,13 @@
 using Microsoft.EntityFrameworkCore;
-using iknow_api.Models;
+using iknow_api.Core.Models;
 
-public class AppDbContext : DbContext
+namespace iknow_api.Core.Data
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options)
-        : base(options) { }
+    public class AppDbContext : DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+            : base(options) { }
 
-    public DbSet<Users> Users { get; set; }
+        public DbSet<User> User { get; set; }
+    }
 }

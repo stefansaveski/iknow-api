@@ -1,8 +1,9 @@
-//using iknow_api.Data;
-using iknow_api.Models;
+using iknow_api.Core.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-
+using iknow_api.Core.Data;
+using iknow_api.Repository.Interfaces;
+using iknow_api.Core.Interfaces;
 
 namespace iknow_api.Controllers
 {
@@ -10,21 +11,27 @@ namespace iknow_api.Controllers
     [Route("user")]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly IUserService _users;
 
-        public UsersController(AppDbContext context, IConfiguration configuration)
+        public UsersController(IUserService users)
         {
-            _context = context;
-            _configuration = configuration;
+            _users = users;
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> Add([FromBody] JsonContent body)
+        public async Task<IActionResult> Add([FromBody] User user)
         {
-            
-            return null;
+            var created = await _users.AddUserAsync(user);
+            return Ok(created);
         }
 
+        [HttpGet("id/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var user = await _users.GetUserByIdAsync(id);
+            if (user == null)
+                return NotFound();
+            return Ok(user);
+        }
     }
 }
