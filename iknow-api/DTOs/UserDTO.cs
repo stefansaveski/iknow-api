@@ -1,4 +1,4 @@
-﻿namespace FinXaccesApi.DTOs
+﻿namespace iknow_api.DTOs
 {
     public class UserDto
     {
