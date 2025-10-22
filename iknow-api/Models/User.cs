@@ -1,6 +1,6 @@
 
 
-namespace iknow_api.Models
+namespace iknow_api.Core.Models
 {
     public enum UserRole
     {
@@ -9,7 +9,7 @@ namespace iknow_api.Models
         Strudent
     }
 
-    public class Users
+    public class User
     {
         public int Id { get; set; }
         public string? Name { get; set; }
