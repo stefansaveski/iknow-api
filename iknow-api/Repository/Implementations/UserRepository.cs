@@ -1,11 +1,10 @@
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using iknow_api.Core.Models;
-using iknow_api.Repository.Interfaces;
 using iknow_api.Core.Data;
+using iknow_api.Core.Data;
+using iknow_api.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace iknow_api.Repository
+namespace FinXaccesApi.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -16,17 +15,25 @@ namespace iknow_api.Repository
             _context = context;
         }
 
-        public Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken = default)
-            => _context.User.AnyAsync(u => u.Email == email, cancellationToken);
-
-        public async Task<User> AddUserAsync(User user, CancellationToken cancellationToken = default)
+        public async Task<bool> UserExistsAsync(string username)
         {
-            await _context.User.AddAsync(user, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
-            return user;
+            return await _context.User.AnyAsync(u => u.Email == username);
         }
 
-        public Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken = default)
-            => _context.User.FindAsync(new object[] { id }, cancellationToken).AsTask();
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            return await _context.User.FirstOrDefaultAsync(u => u.Email == username);
+        }
+
+        public async Task AddUserAsync(User user)
+        {
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> GetUsersCountAsync()
+        {
+            return await _context.User.CountAsync();
+        }
     }
 }

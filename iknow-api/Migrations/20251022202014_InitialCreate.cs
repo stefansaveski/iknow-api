@@ -22,7 +22,7 @@ namespace iknow_api.Migrations
                     Surname = table.Column<string>(type: "text", nullable: true),
                     Index = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
-                    Password = table.Column<string>(type: "text", nullable: true),
+                    PasswordHash = table.Column<string>(type: "text", nullable: true),
                     Bday = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false)

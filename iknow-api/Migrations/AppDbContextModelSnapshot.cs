@@ -45,7 +45,7 @@ namespace iknow_api.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("text");
 
                     b.Property<int>("Role")
