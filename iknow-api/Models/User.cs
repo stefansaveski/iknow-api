@@ -1,6 +1,6 @@
 
 
-namespace iknow_api.Core.Models
+namespace iknow_api.Models
 {
     public enum UserRole
     {

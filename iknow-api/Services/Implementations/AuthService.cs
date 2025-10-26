@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
 using iknow_api.Controllers;
-using iknow_api.Core.Models;
+using iknow_api.Models;
 using iknow_api.DTOs;
 using iknow_api.Repositories;
 using Microsoft.IdentityModel.Tokens;
@@ -35,7 +35,7 @@ namespace iknow_api.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
                 Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Utc),
                 CreatedAt = DateTime.UtcNow,
-                Role = (Core.Models.UserRole)registerDto.Role
+                Role = (Models.UserRole)registerDto.Role
             };
 
             await _userRepository.AddUserAsync(user);
@@ -61,7 +61,7 @@ namespace iknow_api.Services
             var claims = new[]
             {
                 new Claim("id", user.Id.ToString()),
-                new Claim("username", user.Email ?? string.Empty),
+                new Claim("email", user.Email ?? string.Empty),
                 new Claim("role", user.Role.ToString())
             };
 

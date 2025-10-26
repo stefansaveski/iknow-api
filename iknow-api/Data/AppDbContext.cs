@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using iknow_api.Core.Models;
+using iknow_api.Models;
 
-namespace iknow_api.Core.Data
+namespace iknow_api.Data
 {
     public class AppDbContext : DbContext
     {

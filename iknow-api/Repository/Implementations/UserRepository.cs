@@ -1,7 +1,6 @@
-using iknow_api.Core.Models;
-using iknow_api.Core.Data;
-using iknow_api.Core.Data;
-using iknow_api.Core.Models;
+using iknow_api.Models;
+using iknow_api.Data;
+using iknow_api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace iknow_api.Repositories
