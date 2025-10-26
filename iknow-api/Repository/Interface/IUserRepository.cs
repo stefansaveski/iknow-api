@@ -1,4 +1,4 @@
-using iknow_api.Core.Models;
+using iknow_api.Models;
 namespace iknow_api.Repositories
 {
     public interface IUserRepository

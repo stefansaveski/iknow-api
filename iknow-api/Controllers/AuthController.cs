@@ -1,5 +1,7 @@
 ﻿using iknow_api.DTOs;
 using iknow_api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace iknow_api.Controllers
@@ -43,6 +45,13 @@ namespace iknow_api.Controllers
             var token = await _authService.LoginAsync(request);
             if (token == null) return Unauthorized("Invalid credentials");
             return Ok(new { Token = token });
+        }
+
+        [Authorize]
+        [HttpGet("getstring")]
+        public async Task<IActionResult> getstring()
+        {
+            return Ok(new { message = "You are authorized!" });
         }
     }
 }
