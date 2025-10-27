@@ -42,6 +42,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register your services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>(); // You'll need to add the UserRepository implementation
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

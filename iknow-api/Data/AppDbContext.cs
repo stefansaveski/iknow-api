@@ -9,5 +9,8 @@ namespace iknow_api.Data
             : base(options) { }
 
         public DbSet<User> User { get; set; }
+        public DbSet<ContactInfo> ContactInfo { get; set; }
+        public DbSet<HighSchool> HighSchool { get; set; }
+        public DbSet<EnrollmentInfo> EnrollmentInfo { get; set; }
     }
 }

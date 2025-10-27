@@ -6,6 +6,10 @@
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
+    public class GetUserDataDto
+    {
+        public string JWT { get; set; }
+    }
 
     // Registration DTO
     public class RegisterDto
