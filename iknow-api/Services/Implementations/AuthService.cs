@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
-using iknow_api.Controllers;
+using iknow_api.Services;
 using iknow_api.Models;
 using iknow_api.DTOs;
 using iknow_api.Repositories;
@@ -13,12 +13,14 @@ namespace iknow_api.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRefreshTokenService _refreshTokenService;
         private readonly IConfiguration _configuration;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration, IRefreshTokenService refreshTokenService)
         {
             _userRepository = userRepository;
             _configuration = configuration;
+            _refreshTokenService = refreshTokenService;
         }
 
         public async Task<bool> RegisterAsync(RegisterDto registerDto)
@@ -42,13 +44,24 @@ namespace iknow_api.Services
             return true;
         }
 
-        public async Task<string?> LoginAsync(LoginDto loginDto)
+        public async Task<AuthResultDto?> LoginAsync(LoginDto loginDto)
         {
             var user = await _userRepository.GetUserByUsernameAsync(loginDto.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
                 return null;
 
-            return CreateToken(user);
+             var result = new AuthResultDto
+            {
+                AccessToken = CreateToken(user)
+            };
+
+            if (loginDto.GenerateRefreshToken)
+            {
+                //int userid = _userRepository.GetUserByUsernameAsync(loginDto.Email).Id;
+                result.RefreshToken = await _refreshTokenService.GenerateRefreshToken(6);
+            }
+
+            return result;
         }
 
         public async Task<int> GetUsersCountAsync()
