@@ -20,5 +20,6 @@ namespace iknow_api.Models
         public DateTime Bday { get; set; }
         public DateTime CreatedAt { get; set; }
         public UserRole Role { get; set; }
+
     }
 }
