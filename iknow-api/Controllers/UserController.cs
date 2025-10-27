@@ -25,7 +25,7 @@ namespace iknow_api.Controllers
                 // token = your JWT
                 var userData = await _userService.GetUserData(token);
                 if (userData == null) return Ok(new { info = "can't get info" });
-                return Ok(new { Token = userData });
+                return Ok(new { User = userData });
             }
             return null;
             
