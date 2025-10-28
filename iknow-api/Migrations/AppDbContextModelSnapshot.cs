@@ -23,6 +23,7 @@ namespace iknow_api.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("iknow_api.Models.ContactInfo", b =>
+            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,6 +105,24 @@ namespace iknow_api.Migrations
                         .IsUnique();
 
                     b.ToTable("HighSchool");
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("iknow_api.Models.User", b =>
@@ -148,6 +167,11 @@ namespace iknow_api.Migrations
                     b.HasOne("iknow_api.Models.User", "User")
                         .WithOne("ContactInfo")
                         .HasForeignKey("iknow_api.Models.ContactInfo", "UserId")
+            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
+                {
+                    b.HasOne("iknow_api.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

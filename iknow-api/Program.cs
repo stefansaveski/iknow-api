@@ -49,6 +49,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>(); // You'll need to add the UserRepository implementation
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>(); 
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>(); 
 builder.Services.AddAuthorization();
 var app = builder.Build();
 
