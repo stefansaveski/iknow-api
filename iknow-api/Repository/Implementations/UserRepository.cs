@@ -23,6 +23,17 @@ namespace iknow_api.Repositories
         {
             return await _context.User.FirstOrDefaultAsync(u => u.Email == username);
         }
+        
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            return await _context.User
+                .Include(u => u.ContactInfo)
+                .Include(u => u.EnrollmentInfo)
+                .Include(u => u.HighSchool)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+
         public async Task<User?> GetOnlyUserByIdAsync(int id)
         {
             return await _context.User.FirstOrDefaultAsync(u => u.Id == id);
@@ -32,6 +43,21 @@ namespace iknow_api.Repositories
             _context.User.Add(user);
             await _context.SaveChangesAsync();
         }
+        public async Task AddContactAsync(ContactInfo contactInfo)
+        {
+            _context.ContactInfo.Add(contactInfo);
+            await _context.SaveChangesAsync();
+        }
+        public async Task AddEnrollmentAsync(EnrollmentInfo enrollment)
+        {
+            _context.EnrollmentInfo.Add(enrollment);
+            await _context.SaveChangesAsync();
+        }   
+        public async Task AddHighSchoolAsync(HighSchool highSchool)
+        {
+            _context.HighSchool.Add(highSchool);
+            await _context.SaveChangesAsync();
+        }       
 
         public async Task<int> GetUsersCountAsync()
         {

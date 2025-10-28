@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using iknow_api.Data;
 using iknow_api.Repositories;
 using iknow_api.Services;
@@ -32,7 +33,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddOpenApi();
 
 // Register DbContext
@@ -41,6 +46,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register your services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>(); // You'll need to add the UserRepository implementation
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>(); 
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>(); 
