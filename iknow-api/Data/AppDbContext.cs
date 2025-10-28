@@ -12,5 +12,6 @@ namespace iknow_api.Data
         public DbSet<ContactInfo> ContactInfo { get; set; }
         public DbSet<HighSchool> HighSchool { get; set; }
         public DbSet<EnrollmentInfo> EnrollmentInfo { get; set; }
+        public DbSet<RefreshToken> RefreshToken { get; set; }
     }
 }

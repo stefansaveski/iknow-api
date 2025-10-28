@@ -11,10 +11,12 @@ namespace iknow_api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IRefreshTokenService _refreshTokenService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, IRefreshTokenService refreshTokenService)
         {
             _authService = authService;
+            _refreshTokenService = refreshTokenService;
         }
 
         [HttpGet("testdb")]
@@ -52,6 +54,15 @@ namespace iknow_api.Controllers
         public async Task<IActionResult> getstring()
         {
             return Ok(new { message = "You are authorized!" });
+        }
+
+        [HttpPost("verify-user-token")]
+        public async Task<IActionResult> VerifyToken([FromBody] VerifyRefreshTokenDto verifyRefreshToken)
+        {
+            if (await _refreshTokenService.VerifyRefreshToken(verifyRefreshToken))
+            { return Ok(await _authService.GenerateNewJWT(verifyRefreshToken)); }
+            else
+            { return BadRequest(new { message = "No token found!" }); }
         }
     }
 }

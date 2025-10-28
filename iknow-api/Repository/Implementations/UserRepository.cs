@@ -34,6 +34,10 @@ namespace iknow_api.Repositories
         }
 
 
+        public async Task<User?> GetOnlyUserByIdAsync(int id)
+        {
+            return await _context.User.FirstOrDefaultAsync(u => u.Id == id);
+        }
         public async Task AddUserAsync(User user)
         {
             _context.User.Add(user);
