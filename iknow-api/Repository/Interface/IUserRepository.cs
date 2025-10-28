@@ -7,5 +7,7 @@ namespace iknow_api.Repositories
         Task<User?> GetUserByUsernameAsync(string username);
         Task AddUserAsync(User user);
         Task<int> GetUsersCountAsync();
+        Task<User?> GetOnlyUserByIdAsync(int id);
+
     }
 }

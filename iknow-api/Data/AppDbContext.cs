@@ -9,5 +9,6 @@ namespace iknow_api.Data
             : base(options) { }
 
         public DbSet<User> User { get; set; }
+        public DbSet<RefreshToken> RefreshToken { get; set; }
     }
 }
