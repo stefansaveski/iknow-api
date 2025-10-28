@@ -44,6 +44,31 @@ namespace iknow_api.Services
             };
 
             await _userRepository.AddUserAsync(user);
+            int userId = user.Id;
+            var contactInfo = new ContactInfo
+            {
+                UserId = userId,
+                city = registerDto.city,
+                address = registerDto.address,
+                municipality = registerDto.municipality,
+                phoneNumber = registerDto.phoneNumber,
+                microsoftEmail = registerDto.microsoftEmail
+            };
+            await _userRepository.AddContactAsync(contactInfo);
+            var enrollmentInfo = new EnrollmentInfo
+            {
+                UserId = userId,
+                enrollmentYear = registerDto.enrollmentYear,
+                quota = (Models.quota)registerDto.quotaType,
+                major = (Models.major)registerDto.majorType
+            };
+            await _userRepository.AddEnrollmentAsync(enrollmentInfo);
+            await _userRepository.AddHighSchoolAsync(new HighSchool
+            {
+                UserId = userId,
+                GPA = registerDto.gpa,
+                tip = (Models.type)registerDto.tip
+            });
             return true;
         }
 

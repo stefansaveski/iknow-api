@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using iknow_api.Data;
@@ -11,9 +12,11 @@ using iknow_api.Data;
 namespace iknow_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251027140655_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +26,6 @@ namespace iknow_api.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("iknow_api.Models.ContactInfo", b =>
-            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,8 +53,7 @@ namespace iknow_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("ContactInfo");
                 });
@@ -76,8 +77,7 @@ namespace iknow_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("EnrollmentInfo");
                 });
@@ -101,28 +101,9 @@ namespace iknow_api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("HighSchool");
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("HighSchool");
                 });
 
             modelBuilder.Entity("iknow_api.Models.User", b =>
@@ -165,11 +146,6 @@ namespace iknow_api.Migrations
             modelBuilder.Entity("iknow_api.Models.ContactInfo", b =>
                 {
                     b.HasOne("iknow_api.Models.User", "User")
-                        .WithOne("ContactInfo")
-                        .HasForeignKey("iknow_api.Models.ContactInfo", "UserId")
-            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
-                {
-                    b.HasOne("iknow_api.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -181,8 +157,8 @@ namespace iknow_api.Migrations
             modelBuilder.Entity("iknow_api.Models.EnrollmentInfo", b =>
                 {
                     b.HasOne("iknow_api.Models.User", "User")
-                        .WithOne("EnrollmentInfo")
-                        .HasForeignKey("iknow_api.Models.EnrollmentInfo", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -192,21 +168,12 @@ namespace iknow_api.Migrations
             modelBuilder.Entity("iknow_api.Models.HighSchool", b =>
                 {
                     b.HasOne("iknow_api.Models.User", "User")
-                        .WithOne("HighSchool")
-                        .HasForeignKey("iknow_api.Models.HighSchool", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("iknow_api.Models.User", b =>
-                {
-                    b.Navigation("ContactInfo");
-
-                    b.Navigation("EnrollmentInfo");
-
-                    b.Navigation("HighSchool");
                 });
 #pragma warning restore 612, 618
         }
