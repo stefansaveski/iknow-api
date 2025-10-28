@@ -6,6 +6,7 @@ namespace iknow_api.Repositories{
         Task AddTokenAsync(RefreshToken refreshToken);
         Task<bool> VerifyTokenAsync(VerifyRefreshTokenDto refreshTokenDto);
         Task<bool> DeleteTokenAsync(string refreshTokenDto);
+        Task<int?> GetUserId(string refreshTokenDto);
         
     }
 }

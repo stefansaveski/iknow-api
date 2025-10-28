@@ -4,6 +4,7 @@ using iknow_api.Models;
 using Microsoft.EntityFrameworkCore;
 using iknow_api.Services;
 using iknow_api.DTOs;
+using System.Runtime.CompilerServices;
 
 namespace iknow_api.Repositories
 {
@@ -27,11 +28,22 @@ namespace iknow_api.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<int?> GetUserId(string refreshTokenDto)
+        {
+            var token = await _context.RefreshToken.FirstOrDefaultAsync(u => u.Token == refreshTokenDto);
+            return token?.UserId ;
+        }
 
         public async Task<bool> VerifyTokenAsync(VerifyRefreshTokenDto refreshTokenDto)
         {
-             return await _context.RefreshToken
-            .AnyAsync(rt => rt.Token == refreshTokenDto.token && !rt.IsValid && rt.ExpiresAt > DateTime.UtcNow);
+            var token = await _context.RefreshToken
+                .FirstOrDefaultAsync(rt =>
+                    rt.Token == refreshTokenDto.token &&
+                    rt.IsValid &&
+                    rt.ExpiresAt > DateTime.UtcNow);
+
+            return token != null;
         }
+
     }
 }
