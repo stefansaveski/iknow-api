@@ -56,13 +56,13 @@ namespace iknow_api.Controllers
             return Ok(new { message = "You are authorized!" });
         }
 
-        [HttpPost("verify-token")]
-        public async Task<IActionResult> verifyToken([FromBody]  VerifyRefreshTokenDto VerifyRefreshTokenDto)
+        [HttpPost("verify-user-token")]
+        public async Task<IActionResult> VerifyToken([FromBody] VerifyRefreshTokenDto verifyRefreshToken)
         {
-            if (await _refreshTokenService.VerifyRefreshToken(VerifyRefreshTokenDto))
-            {   return Ok();    }
+            if (await _refreshTokenService.VerifyRefreshToken(verifyRefreshToken))
+            { return Ok(await _authService.GenerateNewJWT(verifyRefreshToken)); }
             else
-            {   return BadRequest("No token found");    }
+            { return BadRequest(new { message = "No token found!" }); }
         }
     }
 }

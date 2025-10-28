@@ -2,7 +2,7 @@ namespace iknow_api.DTOs
 {
     public class VerifyRefreshTokenDto
     {
-        public string? token;
+        public string token { get; set; }
     }
     public class AuthResultDto
     {

@@ -13,14 +13,17 @@ namespace iknow_api.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IConfiguration _configuration;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration, IRefreshTokenService refreshTokenService)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration
+                            , IRefreshTokenService refreshTokenService, IRefreshTokenRepository refreshTokenRepository)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _refreshTokenService = refreshTokenService;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<bool> RegisterAsync(RegisterDto registerDto)
@@ -57,8 +60,8 @@ namespace iknow_api.Services
 
             if (loginDto.GenerateRefreshToken)
             {
-                //int userid = _userRepository.GetUserByUsernameAsync(loginDto.Email).Id;
-                result.RefreshToken = await _refreshTokenService.GenerateRefreshToken(6);
+                int userid = _userRepository.GetUserByUsernameAsync(loginDto.Email).Id;
+                result.RefreshToken = await _refreshTokenService.GenerateRefreshToken(userid);
             }
 
             return result;
@@ -67,6 +70,19 @@ namespace iknow_api.Services
         public async Task<int> GetUsersCountAsync()
         {
             return await _userRepository.GetUsersCountAsync();
+        }
+
+        public async Task<AuthResultDto> GenerateNewJWT(VerifyRefreshTokenDto token)
+        {
+            int userid = await _refreshTokenRepository.GetUserId(token.token) ?? 0;
+            User user = await _userRepository.GetOnlyUserByIdAsync(userid);
+
+            var result = new AuthResultDto
+            {
+                AccessToken = CreateToken(user)
+            };
+            
+            return result;
         }
 
         private string CreateToken(User user)
