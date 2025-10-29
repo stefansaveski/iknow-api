@@ -13,6 +13,7 @@ namespace iknow_api.Models
     {
         public int Id { get; set; }
         public string? Name { get; set; }
+        public string? EMBG {get; set; }
         public string? Surname { get; set; }
         public string? Index { get; set; }
         public string? Email { get; set; }
