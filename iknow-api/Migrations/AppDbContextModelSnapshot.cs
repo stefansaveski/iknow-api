@@ -23,7 +23,6 @@ namespace iknow_api.Migrations
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("iknow_api.Models.ContactInfo", b =>
-            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,6 +104,16 @@ namespace iknow_api.Migrations
                         .IsUnique();
 
                     b.ToTable("HighSchool");
+                });
+
+            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -112,7 +121,6 @@ namespace iknow_api.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Token")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("UserId")
@@ -167,11 +175,6 @@ namespace iknow_api.Migrations
                     b.HasOne("iknow_api.Models.User", "User")
                         .WithOne("ContactInfo")
                         .HasForeignKey("iknow_api.Models.ContactInfo", "UserId")
-            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
-                {
-                    b.HasOne("iknow_api.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -194,6 +197,17 @@ namespace iknow_api.Migrations
                     b.HasOne("iknow_api.Models.User", "User")
                         .WithOne("HighSchool")
                         .HasForeignKey("iknow_api.Models.HighSchool", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
+                {
+                    b.HasOne("iknow_api.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
