@@ -12,8 +12,8 @@ using iknow_api.Data;
 namespace iknow_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251029131316_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251030124902_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -149,6 +149,9 @@ namespace iknow_api.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EMBG")
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");

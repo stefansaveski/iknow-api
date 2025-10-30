@@ -2,11 +2,11 @@
 
 namespace iknow_api.Models
 {
-    public enum quota
+    public enum Quota
     {
         drzavna, privatna, stipendija
     }
-    public enum major
+    public enum Major
     {
         SIIS, PIT, KN, KI, IMB, IE, SSP, SEIS
     }
@@ -14,9 +14,9 @@ namespace iknow_api.Models
     {
         public int Id { get; set; }
         public int enrollmentYear { get; set; }
-        public quota quota;
-        public major major { get; set; }
+        public Quota quota;
+        public Major major { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 }
