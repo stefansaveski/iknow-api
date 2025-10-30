@@ -12,6 +12,6 @@ namespace iknow_api.Models
         public string? microsoftEmail { get; set; }
         
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
     }
 }

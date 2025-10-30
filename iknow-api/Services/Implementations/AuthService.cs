@@ -40,7 +40,8 @@ namespace iknow_api.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
                 Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Utc),
                 CreatedAt = DateTime.UtcNow,
-                Role = (Models.UserRole)registerDto.Role
+                Role = (Models.UserRole)registerDto.Role,
+                EMBG = registerDto.EMBG
             };
 
             await _userRepository.AddUserAsync(user);
@@ -59,8 +60,8 @@ namespace iknow_api.Services
             {
                 UserId = userId,
                 enrollmentYear = registerDto.enrollmentYear,
-                quota = (Models.quota)registerDto.quotaType,
-                major = (Models.major)registerDto.majorType
+                quota = (Models.Quota)registerDto.quotaType,
+                major = (Models.Major)registerDto.majorType
             };
             await _userRepository.AddEnrollmentAsync(enrollmentInfo);
             await _userRepository.AddHighSchoolAsync(new HighSchool
@@ -100,11 +101,11 @@ namespace iknow_api.Services
         public async Task<AuthResultDto> GenerateNewJWT(VerifyRefreshTokenDto token)
         {
             int userid = await _refreshTokenRepository.GetUserId(token.token) ?? 0;
-            User user = await _userRepository.GetOnlyUserByIdAsync(userid);
+            User ?user = await _userRepository.GetOnlyUserByIdAsync(userid);
 
             var result = new AuthResultDto
             {
-                AccessToken = CreateToken(user)
+                AccessToken = CreateToken(user) 
             };
             
             return result;

@@ -9,7 +9,7 @@
     }
     public class GetUserDataDto
     {
-        public string JWT { get; set; }
+        public string? JWT { get; set; }
     }
 
     // Registration DTO
@@ -24,15 +24,15 @@
         public DateTime Bday { get; set; }
         public UserRole Role { get; set; }
         public float gpa { get; set; }
-        public type tip { get; set; }
+        public Type tip { get; set; }
         public string city { get; set; } = string.Empty;
         public string address { get; set; } = string.Empty;
         public string municipality { get; set; } = string.Empty;
         public string phoneNumber { get; set; } = string.Empty;
         public string microsoftEmail { get; set; } = string.Empty;
         public int enrollmentYear { get; set; }
-        public quota quotaType { get; set; }
-        public major majorType { get; set; }
+        public Quota quotaType { get; set; }
+        public Major majorType { get; set; }
 
     }
 
@@ -56,15 +56,15 @@
         Professor,
         Student
     }
-    public enum type
+    public enum Type
     {
         strucen, gimnazija
     }
-    public enum quota
+    public enum Quota
     {
         drzavna, privatna, stipendija
     }
-    public enum major
+    public enum Major
     {
         SIIS, PIT, KN, KI, IMB, IE, SSP, SEIS
     }
