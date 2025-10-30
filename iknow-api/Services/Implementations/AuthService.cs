@@ -61,7 +61,7 @@ namespace iknow_api.Services
                 UserId = userId,
                 enrollmentYear = registerDto.enrollmentYear,
                 quota = (Models.Quota)registerDto.quotaType,
-                major = (Models.Major)registerDto.majorType
+                MajorId = registerDto.majorType
             };
             await _userRepository.AddEnrollmentAsync(enrollmentInfo);
             await _userRepository.AddHighSchoolAsync(new HighSchool

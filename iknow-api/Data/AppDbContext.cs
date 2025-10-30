@@ -13,5 +13,121 @@ namespace iknow_api.Data
         public DbSet<HighSchool> HighSchool { get; set; }
         public DbSet<EnrollmentInfo> EnrollmentInfo { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
+
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<DependencySubject> DependencySubjects { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // -------------------------
+            // DependencySubject (self-referencing many-to-many)
+            // -------------------------
+            modelBuilder.Entity<DependencySubject>()
+                .HasKey(ds => new { ds.SubjectId, ds.DependencyId });
+
+            modelBuilder.Entity<DependencySubject>()
+                .HasOne(ds => ds.Subject)
+                .WithMany(s => s.Dependencies)
+                .HasForeignKey(ds => ds.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DependencySubject>()
+                .HasOne(ds => ds.Dependency)
+                .WithMany(s => s.Dependents)
+                .HasForeignKey(ds => ds.DependencyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // -------------------------
+            // MajorSubjects (many-to-many)
+            // -------------------------
+            modelBuilder.Entity<MajorSubjects>()
+                .HasKey(ab => new { ab.MajorId, ab.SubjectId });
+
+            modelBuilder.Entity<MajorSubjects>()
+                .HasOne(ab => ab.Majors)
+                .WithMany(a => a.Subjects)
+                .HasForeignKey(ab => ab.MajorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MajorSubjects>()
+                .HasOne(ab => ab.Subjects)
+                .WithMany(b => b.Majors)
+                .HasForeignKey(ab => ab.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // -------------------------
+            // UserDocuments (many-to-many)
+            // -------------------------
+            modelBuilder.Entity<UserDocuments>()
+                .HasKey(ab => new { ab.UserId, ab.DocumentId });
+
+            modelBuilder.Entity<UserDocuments>()
+                .HasOne(ab => ab.User)
+                .WithMany(a => a.Documents)
+                .HasForeignKey(ab => ab.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserDocuments>()
+                .HasOne(ab => ab.Documents)
+                .WithMany(b => b.User)
+                .HasForeignKey(ab => ab.DocumentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // -------------------------
+            // Payment (user enrollment)
+            // -------------------------
+            modelBuilder.Entity<Payment>()
+                .HasKey(ab => new { ab.UserId, ab.EnrollmentInfoId });
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(ab => ab.User)
+                .WithMany(a => a.EnrolledSemesters)
+                .HasForeignKey(ab => ab.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(ab => ab.EnrolledSemesters)
+                .WithMany(b => b.Users)
+                .HasForeignKey(ab => ab.EnrollmentInfoId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // -------------------------
+            // SemesterSubject (student enrollments and professor assignments)
+            // -------------------------
+            modelBuilder.Entity<SemesterSubject>()
+                .HasKey(ss => ss.Id); // or composite key if you prefer {UserId, EnrolledSemesterId, SubjectId}
+
+            // Student enrollment
+            modelBuilder.Entity<SemesterSubject>()
+                .HasOne(ss => ss.User)
+                .WithMany(u => u.EnrolledSemesterUserSubjects)
+                .HasForeignKey(ss => ss.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Professor teaching
+            modelBuilder.Entity<SemesterSubject>()
+                .HasOne(ss => ss.Professor)
+                .WithMany(u => u.TeachingSubjects)
+                .HasForeignKey(ss => ss.ProfessorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Subject relation
+            modelBuilder.Entity<SemesterSubject>()
+                .HasOne(ss => ss.Subject)
+                .WithMany(s => s.SemesterSubjects)
+                .HasForeignKey(ss => ss.SubjectId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // EnrolledSemester relation
+            modelBuilder.Entity<SemesterSubject>()
+                .HasOne(ss => ss.EnrolledSemester)
+                .WithMany(es => es.SemesterSubjects)
+                .HasForeignKey(ss => ss.EnrolledSemesterId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
     }
 }
