@@ -24,6 +24,11 @@ namespace iknow_api.Models
         public HighSchool? HighSchool { get; set; }
         public ContactInfo? ContactInfo { get; set; }
         public EnrollmentInfo? EnrollmentInfo { get; set; }
+        public ICollection<UserDocuments>? Documents { get; set; }
+        public ICollection<Payment>? EnrolledSemesters { get; set; }
+        public ICollection<SemesterSubject>? EnrolledSemesterUserSubjects { get; set; }
+
+        public ICollection<SemesterSubject>? TeachingSubjects { get; set; }
 
     }
 }

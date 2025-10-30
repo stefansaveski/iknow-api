@@ -32,7 +32,7 @@
         public string microsoftEmail { get; set; } = string.Empty;
         public int enrollmentYear { get; set; }
         public Quota quotaType { get; set; }
-        public Major majorType { get; set; }
+        public int majorType { get; set; }
 
     }
 
