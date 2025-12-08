@@ -1,6 +1,5 @@
 using iknow_api.Models;
 using iknow_api.Data;
-using iknow_api.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace iknow_api.Repositories
@@ -63,5 +62,6 @@ namespace iknow_api.Repositories
         {
             return await _context.User.CountAsync();
         }
+
     }
 }

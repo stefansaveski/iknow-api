@@ -10,7 +10,8 @@ namespace iknow_api.Models
     {
         public int Id { get; set; }
         public int enrollmentYear { get; set; }
-        public Quota quota;
+        // CS1597 fix: no semicolon after accessor block
+        public Quota quota { get; set; }
         public int MajorId { get; set; }
         public Major? Major { get; set; }
         public int UserId { get; set; }

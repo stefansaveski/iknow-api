@@ -28,8 +28,20 @@ namespace iknow_api.Services
 
         public async Task<bool> RegisterAsync(RegisterDto registerDto)
         {
+            // Debug: Log all incoming DTO values
+            Console.WriteLine("=== RegisterDto Debug Info ===");
+            Console.WriteLine($"Name: {registerDto.Name}");
+            Console.WriteLine($"Email: {registerDto.Email}");
+            Console.WriteLine($"majorType: {registerDto.majorType}");
+            Console.WriteLine($"enrollmentYear: {registerDto.enrollmentYear}");
+            Console.WriteLine($"quotaType: {registerDto.quotaType}");
+            Console.WriteLine($"Role: {registerDto.Role}");
+            Console.WriteLine($"tip: {registerDto.tip}");
+            Console.WriteLine("==============================");
+
+            // Check if user already exists
             if (await _userRepository.UserExistsAsync(registerDto.Email))
-                return false;
+                throw new InvalidOperationException("User with this email already exists");
 
             var user = new User
             {

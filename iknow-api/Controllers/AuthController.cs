@@ -36,9 +36,21 @@ namespace iknow_api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
-            var result = await _authService.RegisterAsync(request);
-            if (!result) return BadRequest("User already exists");
-            return Ok("User registered successfully");
+            //Console.WriteLine(request);
+
+            try
+            {
+                var result = await _authService.RegisterAsync(request);
+                return Ok("User registered successfully");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred during registration", error = ex.Message });
+            }
         }
 
         [HttpPost("login")]
@@ -64,5 +76,6 @@ namespace iknow_api.Controllers
             else
             { return BadRequest(new { message = "No token found!" }); }
         }
+
     }
 }

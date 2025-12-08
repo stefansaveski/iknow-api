@@ -6,7 +6,7 @@ namespace iknow_api.Models
     {
         Admin,
         Professor,
-        Strudent
+        Student
     }
 
     public class User

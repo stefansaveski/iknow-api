@@ -1,5 +1,5 @@
 ﻿using iknow_api.DTOs;
-using iknow_api.DTOs;
+using iknow_api.Models;
 namespace iknow_api.Services
 {
     public interface IAuthService
@@ -8,5 +8,6 @@ namespace iknow_api.Services
         Task<AuthResultDto?> LoginAsync(LoginDto loginDto);
         Task<int> GetUsersCountAsync();
         Task<AuthResultDto> GenerateNewJWT(VerifyRefreshTokenDto token);
+       
     }
 }

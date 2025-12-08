@@ -13,5 +13,6 @@ namespace iknow_api.Models
         public EnrolledSemesters? EnrolledSemester { get; set; }
         public Subject? Subject { get; set; }
         public User? Professor { get; set; }           
+        public PassedSubject? PassedSubject { get; set; }
     }
 }
