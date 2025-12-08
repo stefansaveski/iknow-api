@@ -16,11 +16,21 @@ namespace iknow_api.Data
 
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<DependencySubject> DependencySubjects { get; set; }
+        public DbSet<Major> Majors { get; set; }
+        public DbSet<PassedSubject> PassedSubjects { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Major>().HasData(
+                new Major { Id = 1, Name = "PIT" },
+                new Major { Id = 2, Name = "SIIS" },
+                new Major { Id = 3, Name = "SEIS" },
+                new Major { Id = 4, Name = "KN" }
+            );
+
 
             // -------------------------
             // DependencySubject (self-referencing many-to-many)
@@ -127,6 +137,18 @@ namespace iknow_api.Data
                 .WithMany(es => es.SemesterSubjects)
                 .HasForeignKey(ss => ss.EnrolledSemesterId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // -------------------------
+            // PassedSubject (one-to-one with SemesterSubject)
+            // -------------------------
+            modelBuilder.Entity<PassedSubject>()
+                .HasKey(ps => ps.Id);
+
+            modelBuilder.Entity<PassedSubject>()
+                .HasOne(ps => ps.SemesterSubject)
+                .WithOne(ss => ss.PassedSubject)
+                .HasForeignKey<PassedSubject>(ps => ps.SemesterSubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

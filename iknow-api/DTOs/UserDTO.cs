@@ -1,4 +1,6 @@
-﻿namespace iknow_api.DTOs
+﻿using System.Text.Json.Serialization;
+
+namespace iknow_api.DTOs
 {
     // Login DTO
     public class LoginDto
@@ -24,7 +26,7 @@
         public DateTime Bday { get; set; }
         public UserRole Role { get; set; }
         public float gpa { get; set; }
-        public Type tip { get; set; }
+        public HighSchoolType tip { get; set; }
         public string city { get; set; } = string.Empty;
         public string address { get; set; } = string.Empty;
         public string municipality { get; set; } = string.Empty;
@@ -56,16 +58,12 @@
         Professor,
         Student
     }
-    public enum Type
+    public enum HighSchoolType
     {
         strucen, gimnazija
     }
     public enum Quota
     {
         drzavna, privatna, stipendija
-    }
-    public enum Major
-    {
-        SIIS, PIT, KN, KI, IMB, IE, SSP, SEIS
     }
 }
