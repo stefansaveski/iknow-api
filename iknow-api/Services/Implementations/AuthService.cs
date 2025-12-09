@@ -7,6 +7,8 @@ using iknow_api.Models;
 using iknow_api.DTOs;
 using iknow_api.Repositories;
 using Microsoft.IdentityModel.Tokens;
+using iknow_api.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace iknow_api.Services
 {
@@ -16,14 +18,17 @@ namespace iknow_api.Services
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IConfiguration _configuration;
+        private readonly AppDbContext _context;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration
-                            , IRefreshTokenService refreshTokenService, IRefreshTokenRepository refreshTokenRepository)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration,
+                            IRefreshTokenService refreshTokenService, IRefreshTokenRepository refreshTokenRepository,
+                            AppDbContext context)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _refreshTokenService = refreshTokenService;
             _refreshTokenRepository = refreshTokenRepository;
+            _context = context;
         }
 
         public async Task<bool> RegisterAsync(RegisterDto registerDto)
@@ -43,46 +48,68 @@ namespace iknow_api.Services
             if (await _userRepository.UserExistsAsync(registerDto.Email))
                 throw new InvalidOperationException("User with this email already exists");
 
-            var user = new User
+            // Use a transaction to ensure all entities are saved together
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                Name = registerDto.Name,
-                Surname = registerDto.Surname,
-                Index = registerDto.Index,
-                Email = registerDto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-                Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Utc),
-                CreatedAt = DateTime.UtcNow,
-                Role = (Models.UserRole)registerDto.Role,
-                EMBG = registerDto.EMBG
-            };
+                var user = new User
+                {
+                    Name = registerDto.Name,
+                    Surname = registerDto.Surname,
+                    Index = registerDto.Index,
+                    Email = registerDto.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
+                    Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Utc),
+                    CreatedAt = DateTime.UtcNow,
+                    Role = (Models.UserRole)registerDto.Role,
+                    EMBG = registerDto.EMBG
+                };
 
-            await _userRepository.AddUserAsync(user);
-            int userId = user.Id;
-            var contactInfo = new ContactInfo
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
+                
+                int userId = user.Id;
+                
+                var contactInfo = new ContactInfo
+                {
+                    UserId = userId,
+                    city = registerDto.city,
+                    address = registerDto.address,
+                    municipality = registerDto.municipality,
+                    phoneNumber = registerDto.phoneNumber,
+                    microsoftEmail = registerDto.microsoftEmail
+                };
+                
+                var enrollmentInfo = new EnrollmentInfo
+                {
+                    UserId = userId,
+                    enrollmentYear = registerDto.enrollmentYear,
+                    quota = (Models.Quota)registerDto.quotaType,
+                    MajorId = registerDto.majorType
+                };
+                
+                var highSchool = new HighSchool
+                {
+                    UserId = userId,
+                    GPA = registerDto.gpa,
+                    tip = (Models.type)registerDto.tip
+                };
+
+                _context.ContactInfo.Add(contactInfo);
+                _context.EnrollmentInfo.Add(enrollmentInfo);
+                _context.HighSchool.Add(highSchool);
+                
+                // Save all related entities in a single transaction
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                
+                return true;
+            }
+            catch
             {
-                UserId = userId,
-                city = registerDto.city,
-                address = registerDto.address,
-                municipality = registerDto.municipality,
-                phoneNumber = registerDto.phoneNumber,
-                microsoftEmail = registerDto.microsoftEmail
-            };
-            await _userRepository.AddContactAsync(contactInfo);
-            var enrollmentInfo = new EnrollmentInfo
-            {
-                UserId = userId,
-                enrollmentYear = registerDto.enrollmentYear,
-                quota = (Models.Quota)registerDto.quotaType,
-                MajorId = registerDto.majorType
-            };
-            await _userRepository.AddEnrollmentAsync(enrollmentInfo);
-            await _userRepository.AddHighSchoolAsync(new HighSchool
-            {
-                UserId = userId,
-                GPA = registerDto.gpa,
-                tip = (Models.type)registerDto.tip
-            });
-            return true;
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<AuthResultDto?> LoginAsync(LoginDto loginDto)
@@ -98,8 +125,7 @@ namespace iknow_api.Services
 
             if (loginDto.GenerateRefreshToken)
             {
-                int userid = _userRepository.GetUserByUsernameAsync(loginDto.Email).Id;
-                result.RefreshToken = await _refreshTokenService.GenerateRefreshToken(userid);
+                result.RefreshToken = await _refreshTokenService.GenerateRefreshToken(user.Id);
             }
 
             return result;
