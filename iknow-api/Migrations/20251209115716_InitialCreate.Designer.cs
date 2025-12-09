@@ -12,7 +12,7 @@ using iknow_api.Data;
 namespace iknow_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251208203846_InitialCreate")]
+    [Migration("20251209115716_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
