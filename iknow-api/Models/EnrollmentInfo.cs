@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Net.Http.Headers;
 
 namespace iknow_api.Models
 {
@@ -10,12 +12,13 @@ namespace iknow_api.Models
     {
         public int Id { get; set; }
         public int enrollmentYear { get; set; }
-        // CS1597 fix: no semicolon after accessor block
         public Quota quota { get; set; }
         public int MajorId { get; set; }
         public Major? Major { get; set; }
         public int UserId { get; set; }
         public User? User { get; set; }
+        public string? StudyType { get; set; }
+        public string? StudyStatus { get; set; }
 
     }
 }

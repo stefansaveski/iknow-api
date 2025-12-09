@@ -18,6 +18,7 @@ namespace iknow_api.DTOs
     public class RegisterDto
     {
         public string Name { get; set; } = string.Empty;
+        public string? MiddleName { get; set; }
         public string Surname { get; set; } = string.Empty;
         public string EMBG { get; set; } = string.Empty;
         public string? Index { get; set; }
@@ -35,7 +36,11 @@ namespace iknow_api.DTOs
         public int enrollmentYear { get; set; }
         public Quota quotaType { get; set; }
         public int majorType { get; set; }
-
+        public string? gender { get; set; }
+        public string? nationality { get; set; }
+        public string? citizenship { get; set; }
+        public string? studyType { get; set; }
+        public string? studyStatus { get; set; }
     }
 
     // User response DTO (for returning user data without password)

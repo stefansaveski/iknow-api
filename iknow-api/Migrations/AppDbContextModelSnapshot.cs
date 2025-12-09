@@ -30,23 +30,23 @@ namespace iknow_api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("City")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MicrosoftEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Municipality")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("text");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("address")
-                        .HasColumnType("text");
-
-                    b.Property<string>("city")
-                        .HasColumnType("text");
-
-                    b.Property<string>("microsoftEmail")
-                        .HasColumnType("text");
-
-                    b.Property<string>("municipality")
-                        .HasColumnType("text");
-
-                    b.Property<string>("phoneNumber")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -79,13 +79,13 @@ namespace iknow_api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("body")
+                    b.Property<string>("Body")
                         .HasColumnType("text");
 
-                    b.Property<int>("cost")
+                    b.Property<int>("Cost")
                         .HasColumnType("integer");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -136,6 +136,12 @@ namespace iknow_api.Migrations
                     b.Property<int>("MajorId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("StudyStatus")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StudyType")
+                        .HasColumnType("text");
+
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -166,10 +172,13 @@ namespace iknow_api.Migrations
                     b.Property<float>("GPA")
                         .HasColumnType("real");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("HighSchoolType")
                         .HasColumnType("integer");
 
-                    b.Property<int>("tip")
+                    b.Property<string>("StudyLanguage")
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -226,7 +235,7 @@ namespace iknow_api.Migrations
                     b.Property<int>("SubjectId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Akreditacija")
+                    b.Property<int>("Accreditation")
                         .HasColumnType("integer");
 
                     b.Property<int>("MandatorySemester")
@@ -378,6 +387,9 @@ namespace iknow_api.Migrations
                     b.Property<DateTime>("Bday")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Citizenship")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -387,10 +399,19 @@ namespace iknow_api.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<string>("Gender")
+                        .HasColumnType("text");
+
                     b.Property<string>("Index")
                         .HasColumnType("text");
 
+                    b.Property<string>("MiddleName")
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nationality")
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")

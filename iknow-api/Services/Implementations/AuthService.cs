@@ -55,6 +55,7 @@ namespace iknow_api.Services
                 var user = new User
                 {
                     Name = registerDto.Name,
+                    MiddleName = registerDto.MiddleName,
                     Surname = registerDto.Surname,
                     Index = registerDto.Index,
                     Email = registerDto.Email,
@@ -62,7 +63,10 @@ namespace iknow_api.Services
                     Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Utc),
                     CreatedAt = DateTime.UtcNow,
                     Role = (Models.UserRole)registerDto.Role,
-                    EMBG = registerDto.EMBG
+                    EMBG = registerDto.EMBG,
+                    Nationality = registerDto.nationality,
+                    Citizenship = registerDto.citizenship,
+                    Gender = registerDto.gender
                 };
 
                 _context.User.Add(user);
@@ -73,11 +77,11 @@ namespace iknow_api.Services
                 var contactInfo = new ContactInfo
                 {
                     UserId = userId,
-                    city = registerDto.city,
-                    address = registerDto.address,
-                    municipality = registerDto.municipality,
-                    phoneNumber = registerDto.phoneNumber,
-                    microsoftEmail = registerDto.microsoftEmail
+                    City = registerDto.city,
+                    Address = registerDto.address,
+                    Municipality = registerDto.municipality,
+                    PhoneNumber = registerDto.phoneNumber,
+                    MicrosoftEmail = registerDto.microsoftEmail
                 };
                 
                 var enrollmentInfo = new EnrollmentInfo
@@ -85,14 +89,16 @@ namespace iknow_api.Services
                     UserId = userId,
                     enrollmentYear = registerDto.enrollmentYear,
                     quota = (Models.Quota)registerDto.quotaType,
-                    MajorId = registerDto.majorType
+                    MajorId = registerDto.majorType,
+                    StudyStatus = registerDto.studyStatus,
+                    StudyType = registerDto.studyType
                 };
                 
                 var highSchool = new HighSchool
                 {
                     UserId = userId,
                     GPA = registerDto.gpa,
-                    tip = (Models.type)registerDto.tip
+                    HighSchoolType = (Models.HighSchoolType)registerDto.tip
                 };
 
                 _context.ContactInfo.Add(contactInfo);

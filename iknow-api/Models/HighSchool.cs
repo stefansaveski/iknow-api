@@ -2,17 +2,17 @@
 
 namespace iknow_api.Models
 {
-    public enum type
+    public enum HighSchoolType
     {
-        strucen, gimnazija
+        Strucen, Gimnazija
     }
     public class HighSchool
     {
         public int Id { get; set; }
         public float GPA { get; set; }
-        public type tip { get; set; }
-
+        public HighSchoolType HighSchoolType { get; set; }
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
+        public string? StudyLanguage { get; set; }
     }
 }
