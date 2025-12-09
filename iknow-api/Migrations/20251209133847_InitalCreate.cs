@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace iknow_api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitalCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,9 +20,9 @@ namespace iknow_api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "text", nullable: true),
-                    body = table.Column<string>(type: "text", nullable: true),
-                    cost = table.Column<int>(type: "integer", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Body = table.Column<string>(type: "text", nullable: true),
+                    Cost = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -70,6 +70,10 @@ namespace iknow_api.Migrations
                     Index = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
                     PasswordHash = table.Column<string>(type: "text", nullable: true),
+                    MiddleName = table.Column<string>(type: "text", nullable: true),
+                    Gender = table.Column<string>(type: "text", nullable: true),
+                    Nationality = table.Column<string>(type: "text", nullable: true),
+                    Citizenship = table.Column<string>(type: "text", nullable: true),
                     Bday = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Role = table.Column<int>(type: "integer", nullable: false)
@@ -110,7 +114,7 @@ namespace iknow_api.Migrations
                     MajorId = table.Column<int>(type: "integer", nullable: false),
                     SubjectId = table.Column<int>(type: "integer", nullable: false),
                     MandatorySemester = table.Column<int>(type: "integer", nullable: false),
-                    Akreditacija = table.Column<int>(type: "integer", nullable: false)
+                    Accreditation = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -135,11 +139,11 @@ namespace iknow_api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    city = table.Column<string>(type: "text", nullable: true),
-                    address = table.Column<string>(type: "text", nullable: true),
-                    municipality = table.Column<string>(type: "text", nullable: true),
-                    phoneNumber = table.Column<string>(type: "text", nullable: true),
-                    microsoftEmail = table.Column<string>(type: "text", nullable: true),
+                    City = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    Municipality = table.Column<string>(type: "text", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    MicrosoftEmail = table.Column<string>(type: "text", nullable: true),
                     UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -191,7 +195,9 @@ namespace iknow_api.Migrations
                     enrollmentYear = table.Column<int>(type: "integer", nullable: false),
                     quota = table.Column<int>(type: "integer", nullable: false),
                     MajorId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    StudyType = table.Column<string>(type: "text", nullable: true),
+                    StudyStatus = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -217,8 +223,9 @@ namespace iknow_api.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     GPA = table.Column<float>(type: "real", nullable: false),
-                    tip = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
+                    HighSchoolType = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    StudyLanguage = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {

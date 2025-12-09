@@ -5,11 +5,11 @@ namespace iknow_api.Models
     public class ContactInfo
     {
         public int Id { get; set; }
-        public string? city { get; set; }
-        public string? address { get; set; }
-        public string? municipality { get; set; }
-        public string? phoneNumber { get; set; }
-        public string? microsoftEmail { get; set; }
+        public string? City { get; set; }
+        public string? Address { get; set; }
+        public string? Municipality { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? MicrosoftEmail { get; set; }
         
         public int UserId { get; set; }
         public User? User { get; set; }

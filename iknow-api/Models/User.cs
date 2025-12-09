@@ -18,6 +18,10 @@ namespace iknow_api.Models
         public string? Index { get; set; }
         public string? Email { get; set; }
         public string? PasswordHash { get; set; }
+        public string? MiddleName { get; set; }
+        public string? Gender { get; set; }
+        public string? Nationality { get; set; }
+        public string? Citizenship { get; set; }
         public DateTime Bday { get; set; }
         public DateTime CreatedAt { get; set; }
         public UserRole Role { get; set; }
