@@ -8,7 +8,7 @@ namespace iknow_api.Models
         public int EnrolledSemesterId { get; set; }
         public int SubjectId { get; set; }
         public int ProfessorId { get; set; }
-        
+        public bool Signature { get; set; }
         public User? User { get; set; }                 
         public EnrolledSemesters? EnrolledSemester { get; set; }
         public Subject? Subject { get; set; }

@@ -72,7 +72,7 @@ namespace iknow_api.Controllers
                     var newResult = new
                     {
                         id = userData[i].Id,
-                        semester = (userData[i].Type == 0 ? "Зимски" : "Летен") + $"({userData[i].Year}/{userData[i].Year + 1})",
+                        //semester = (userData[i].Type == 0 ? "Зимски" : "Летен") + $"({userData[i].Year}/{userData[i].Year + 1})",
                         direction = userData[i].Major?.Name ?? "",
                         quota = userData[i].QuotaType.ToString(),
                         note = "",

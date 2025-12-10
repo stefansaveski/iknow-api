@@ -9,11 +9,25 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace iknow_api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalCreate : Migration
+    public partial class UpdateModels : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ActiveSemesters",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    year = table.Column<int>(type: "integer", nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActiveSemesters", x => x.id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Documents",
                 columns: table => new
@@ -161,17 +175,25 @@ namespace iknow_api.Migrations
                 name: "EnrolledSemesters",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
-                    Year = table.Column<int>(type: "integer", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
                     QuotaType = table.Column<int>(type: "integer", nullable: false),
-                    MajorId = table.Column<int>(type: "integer", nullable: false)
+                    MajorId = table.Column<int>(type: "integer", nullable: false),
+                    StudentComment = table.Column<string>(type: "text", nullable: true),
+                    Node = table.Column<string>(type: "text", nullable: true),
+                    CratedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    LastChange = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Veryfied = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EnrolledSemesters", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EnrolledSemesters_ActiveSemesters_Id",
+                        column: x => x.Id,
+                        principalTable: "ActiveSemesters",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_EnrolledSemesters_Majors_MajorId",
                         column: x => x.MajorId,
@@ -285,24 +307,25 @@ namespace iknow_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Payment",
+                name: "Payments",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    EnrollmentInfoId = table.Column<int>(type: "integer", nullable: false),
                     Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    EnrollmentInfoId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Payment", x => new { x.UserId, x.EnrollmentInfoId });
+                    table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Payment_EnrolledSemesters_EnrollmentInfoId",
+                        name: "FK_Payments_EnrolledSemesters_EnrollmentInfoId",
                         column: x => x.EnrollmentInfoId,
                         principalTable: "EnrolledSemesters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Payment_User_UserId",
+                        name: "FK_Payments_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -310,7 +333,7 @@ namespace iknow_api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SemesterSubject",
+                name: "SemesterSubjects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -318,31 +341,32 @@ namespace iknow_api.Migrations
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     EnrolledSemesterId = table.Column<int>(type: "integer", nullable: false),
                     SubjectId = table.Column<int>(type: "integer", nullable: false),
-                    ProfessorId = table.Column<int>(type: "integer", nullable: false)
+                    ProfessorId = table.Column<int>(type: "integer", nullable: false),
+                    Signature = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SemesterSubject", x => x.Id);
+                    table.PrimaryKey("PK_SemesterSubjects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SemesterSubject_EnrolledSemesters_EnrolledSemesterId",
+                        name: "FK_SemesterSubjects_EnrolledSemesters_EnrolledSemesterId",
                         column: x => x.EnrolledSemesterId,
                         principalTable: "EnrolledSemesters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SemesterSubject_Subjects_SubjectId",
+                        name: "FK_SemesterSubjects_Subjects_SubjectId",
                         column: x => x.SubjectId,
                         principalTable: "Subjects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SemesterSubject_User_ProfessorId",
+                        name: "FK_SemesterSubjects_User_ProfessorId",
                         column: x => x.ProfessorId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SemesterSubject_User_UserId",
+                        name: "FK_SemesterSubjects_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
@@ -363,9 +387,9 @@ namespace iknow_api.Migrations
                 {
                     table.PrimaryKey("PK_PassedSubjects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PassedSubjects_SemesterSubject_SemesterSubjectId",
+                        name: "FK_PassedSubjects_SemesterSubjects_SemesterSubjectId",
                         column: x => x.SemesterSubjectId,
-                        principalTable: "SemesterSubject",
+                        principalTable: "SemesterSubjects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -431,9 +455,14 @@ namespace iknow_api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Payment_EnrollmentInfoId",
-                table: "Payment",
+                name: "IX_Payments_EnrollmentInfoId",
+                table: "Payments",
                 column: "EnrollmentInfoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_UserId",
+                table: "Payments",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_UserId",
@@ -441,23 +470,23 @@ namespace iknow_api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SemesterSubject_EnrolledSemesterId",
-                table: "SemesterSubject",
+                name: "IX_SemesterSubjects_EnrolledSemesterId",
+                table: "SemesterSubjects",
                 column: "EnrolledSemesterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SemesterSubject_ProfessorId",
-                table: "SemesterSubject",
+                name: "IX_SemesterSubjects_ProfessorId",
+                table: "SemesterSubjects",
                 column: "ProfessorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SemesterSubject_SubjectId",
-                table: "SemesterSubject",
+                name: "IX_SemesterSubjects_SubjectId",
+                table: "SemesterSubjects",
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SemesterSubject_UserId",
-                table: "SemesterSubject",
+                name: "IX_SemesterSubjects_UserId",
+                table: "SemesterSubjects",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -488,7 +517,7 @@ namespace iknow_api.Migrations
                 name: "PassedSubjects");
 
             migrationBuilder.DropTable(
-                name: "Payment");
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "RefreshToken");
@@ -497,7 +526,7 @@ namespace iknow_api.Migrations
                 name: "UserDocuments");
 
             migrationBuilder.DropTable(
-                name: "SemesterSubject");
+                name: "SemesterSubjects");
 
             migrationBuilder.DropTable(
                 name: "Documents");
@@ -507,6 +536,9 @@ namespace iknow_api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Subjects");
+
+            migrationBuilder.DropTable(
+                name: "ActiveSemesters");
 
             migrationBuilder.DropTable(
                 name: "Majors");
