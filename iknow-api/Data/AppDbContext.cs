@@ -13,12 +13,17 @@ namespace iknow_api.Data
         public DbSet<HighSchool> HighSchool { get; set; }
         public DbSet<EnrollmentInfo> EnrollmentInfo { get; set; }
         public DbSet<RefreshToken> RefreshToken { get; set; }
-
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<DependencySubject> DependencySubjects { get; set; }
         public DbSet<Major> Majors { get; set; }
         public DbSet<PassedSubject> PassedSubjects { get; set; }
         public DbSet<EnrolledSemesters> EnrolledSemesters { get; set; }
+        public DbSet<ActiveSemesters> ActiveSemesters { get; set; }
+        public DbSet<SemesterSubject> SemesterSubjects { get; set; }
+        public DbSet<MajorSubjects> MajorSubjects { get; set; }
+        public DbSet<UserDocuments> UserDocuments { get; set; }
+        public DbSet<Documents> Documents { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -91,18 +96,18 @@ namespace iknow_api.Data
             // Payment (user enrollment)
             // -------------------------
             modelBuilder.Entity<Payment>()
-                .HasKey(ab => new { ab.UserId, ab.EnrollmentInfoId });
+                .HasKey(p => p.Id);
 
             modelBuilder.Entity<Payment>()
-                .HasOne(ab => ab.User)
-                .WithMany(a => a.EnrolledSemesters)
-                .HasForeignKey(ab => ab.UserId)
+                .HasOne(p => p.User)
+                .WithMany(u => u.EnrolledSemesters)
+                .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Payment>()
-                .HasOne(ab => ab.EnrolledSemesters)
-                .WithMany(b => b.Users)
-                .HasForeignKey(ab => ab.EnrollmentInfoId)
+                .HasOne(p => p.EnrolledSemesters)
+                .WithMany(es => es.Users)
+                .HasForeignKey(p => p.EnrollmentInfoId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // -------------------------
@@ -150,6 +155,15 @@ namespace iknow_api.Data
                 .WithOne(ss => ss.PassedSubject)
                 .HasForeignKey<PassedSubject>(ps => ps.SemesterSubjectId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // -------------------------
+            // ActiveSemesters to EnrolledSemesters (one-to-many)
+            // -------------------------
+            modelBuilder.Entity<EnrolledSemesters>()
+                .HasOne(es => es.Semester)
+                .WithMany(a => a.EnrolledSemesters)
+                .HasForeignKey(es => es.Id)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

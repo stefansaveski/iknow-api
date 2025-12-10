@@ -11,6 +11,8 @@ namespace iknow_api.Models
 
     public class User
     {
+        internal object Payments;
+
         public int Id { get; set; }
         public string? Name { get; set; }
         public string? EMBG {get; set; }
