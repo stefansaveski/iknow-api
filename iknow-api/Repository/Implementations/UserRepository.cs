@@ -62,6 +62,13 @@ namespace iknow_api.Repositories
         {
             return await _context.User.CountAsync();
         }
+        public async Task<List<EnrolledSemesters>> GetUserSemestersAsync(int id)
+        {
+            return await _context.EnrolledSemesters
+                .Include(es => es.Major)
+                .Where(es => es.UserId == id)
+                .ToListAsync();
+        }
 
     }
 }
