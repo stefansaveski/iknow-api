@@ -18,6 +18,7 @@ namespace iknow_api.Data
         public DbSet<DependencySubject> DependencySubjects { get; set; }
         public DbSet<Major> Majors { get; set; }
         public DbSet<PassedSubject> PassedSubjects { get; set; }
+        public DbSet<EnrolledSemesters> EnrolledSemesters { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

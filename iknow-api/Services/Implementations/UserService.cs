@@ -33,6 +33,19 @@ namespace iknow_api.Services
             else
                 return user;
         }
+        public async Task<List<EnrolledSemesters>> GetUserSemesters(string JWT)
+        {
+            var userId = ExtractUserIdFromJwt(JWT);
+            if (userId == null)
+                return null;
+
+            // Now you can use userId to fetch user data
+            var semesters = await _userRepository.GetUserSemestersAsync(userId.Value);
+            if (semesters == null)
+                return null;
+            else
+                return semesters;
+        }
 
         private int? ExtractUserIdFromJwt(string token)
         {
