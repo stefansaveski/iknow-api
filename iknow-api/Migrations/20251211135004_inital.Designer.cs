@@ -12,8 +12,8 @@ using iknow_api.Data;
 namespace iknow_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251210134426_UpdateModels")]
-    partial class UpdateModels
+    [Migration("20251211135004_inital")]
+    partial class inital
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
