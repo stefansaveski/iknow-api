@@ -65,8 +65,30 @@ namespace iknow_api.Repositories
         public async Task<List<EnrolledSemesters>> GetUserSemestersAsync(int id)
         {
             return await _context.EnrolledSemesters
+                .AsNoTracking()
                 .Include(es => es.Major)
+                .Include(es => es.Semester)
+                .Include(es => es.SemesterSubjects)
+                    .ThenInclude(ss => ss.Subject)
+                .Include(es => es.SemesterSubjects)
+                    .ThenInclude(ss => ss.Professor)
                 .Where(es => es.UserId == id)
+                .AsSplitQuery() // This helps avoid cartesian explosion
+                .ToListAsync();
+        }
+
+        public async Task<List<PassedSubject>> GetUserPassedSubjectsAsync(int id)
+        {
+            return await _context.PassedSubjects
+                .AsNoTracking()
+                .Include(ps => ps.SemesterSubject)
+                    .ThenInclude(ss => ss.Subject)
+                .Include(ps => ps.SemesterSubject)
+                    .ThenInclude(ss => ss.EnrolledSemester)
+                        .ThenInclude(es => es.Semester)
+                .Include(ps => ps.SemesterSubject)
+                    .ThenInclude(ss => ss.Professor)
+                .Where(ps => ps.SemesterSubject.UserId == id)
                 .ToListAsync();
         }
 

@@ -11,5 +11,6 @@ namespace iknow_api.Models
         public ICollection<DependencySubject>? Dependents { get; set; }
         public ICollection<MajorSubjects>? Majors { get; set; }
         public ICollection<SemesterSubject>? SemesterSubjects { get; set; }
+        
     }
 }
