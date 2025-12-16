@@ -12,8 +12,8 @@ using iknow_api.Data;
 namespace iknow_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251211135004_inital")]
-    partial class inital
+    [Migration("20251216191800_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,19 +27,19 @@ namespace iknow_api.Migrations
 
             modelBuilder.Entity("iknow_api.Models.ActiveSemesters", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<int>("year")
+                    b.Property<int>("Year")
                         .HasColumnType("integer");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("ActiveSemesters");
                 });
@@ -129,10 +129,13 @@ namespace iknow_api.Migrations
                     b.Property<int>("MajorId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Node")
+                    b.Property<string>("Note")
                         .HasColumnType("text");
 
                     b.Property<int>("QuotaType")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SemesterId")
                         .HasColumnType("integer");
 
                     b.Property<string>("StudentComment")
@@ -141,7 +144,7 @@ namespace iknow_api.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Veryfied")
+                    b.Property<DateTime>("Verified")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -161,7 +164,13 @@ namespace iknow_api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("EnrollmentYear")
+                        .HasColumnType("integer");
+
                     b.Property<int>("MajorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quota")
                         .HasColumnType("integer");
 
                     b.Property<string>("StudyStatus")
@@ -171,12 +180,6 @@ namespace iknow_api.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("enrollmentYear")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("quota")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -322,6 +325,26 @@ namespace iknow_api.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("iknow_api.Models.ProfessorSubjects", b =>
+                {
+                    b.Property<int>("ProfessorId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SemesterId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ProfessorId", "SemesterId", "SubjectId");
+
+                    b.HasIndex("SemesterId");
+
+                    b.HasIndex("SubjectId");
+
+                    b.ToTable("ProfessorSubjects");
                 });
 
             modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>
@@ -613,6 +636,33 @@ namespace iknow_api.Migrations
                     b.Navigation("EnrolledSemesters");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("iknow_api.Models.ProfessorSubjects", b =>
+                {
+                    b.HasOne("iknow_api.Models.User", "Professor")
+                        .WithMany()
+                        .HasForeignKey("ProfessorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("iknow_api.Models.ActiveSemesters", "Semester")
+                        .WithMany()
+                        .HasForeignKey("SemesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("iknow_api.Models.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Professor");
+
+                    b.Navigation("Semester");
+
+                    b.Navigation("Subject");
                 });
 
             modelBuilder.Entity("iknow_api.Models.RefreshToken", b =>

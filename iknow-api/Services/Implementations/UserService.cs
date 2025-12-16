@@ -47,6 +47,19 @@ namespace iknow_api.Services
                 return semesters;
         }
 
+        public async Task<List<PassedSubject>> GetUserPassedSubjects(string JWT)
+        {
+            var userId = ExtractUserIdFromJwt(JWT);
+            if (userId == null)
+                return null;
+
+            var passedSubjects = await _userRepository.GetUserPassedSubjectsAsync(userId.Value);
+            if (passedSubjects == null)
+                return null;
+            else
+                return passedSubjects;
+        }
+
         private int? ExtractUserIdFromJwt(string token)
         {
             try

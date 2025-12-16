@@ -6,5 +6,6 @@ namespace iknow_api.Services
     {
         Task<User> GetUserData(string userId);
         Task<List<EnrolledSemesters>> GetUserSemesters(string userId);
+        Task<List<PassedSubject>> GetUserPassedSubjects(string userId);
     }
 }

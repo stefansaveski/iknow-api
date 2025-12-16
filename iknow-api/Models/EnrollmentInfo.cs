@@ -11,8 +11,8 @@ namespace iknow_api.Models
     public class EnrollmentInfo
     {
         public int Id { get; set; }
-        public int enrollmentYear { get; set; }
-        public Quota quota { get; set; }
+        public int EnrollmentYear { get; set; }
+        public Quota Quota { get; set; }
         public int MajorId { get; set; }
         public Major? Major { get; set; }
         public int UserId { get; set; }

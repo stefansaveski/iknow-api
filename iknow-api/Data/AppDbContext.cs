@@ -24,6 +24,7 @@ namespace iknow_api.Data
         public DbSet<UserDocuments> UserDocuments { get; set; }
         public DbSet<Documents> Documents { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<ProfessorSubjects> ProfessorSubjects { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -164,6 +165,30 @@ namespace iknow_api.Data
                 .WithMany(a => a.EnrolledSemesters)
                 .HasForeignKey(es => es.Id)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // -------------------------
+            // ProfessorSubjects (many-to-many: Professor -> Semester -> Subject)
+            // -------------------------
+            modelBuilder.Entity<ProfessorSubjects>()
+                .HasKey(ps => new { ps.ProfessorId, ps.SemesterId, ps.SubjectId });
+
+            modelBuilder.Entity<ProfessorSubjects>()
+                .HasOne(ps => ps.Professor)
+                .WithMany()
+                .HasForeignKey(ps => ps.ProfessorId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProfessorSubjects>()
+                .HasOne(ps => ps.Semester)
+                .WithMany()
+                .HasForeignKey(ps => ps.SemesterId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ProfessorSubjects>()
+                .HasOne(ps => ps.Subject)
+                .WithMany()
+                .HasForeignKey(ps => ps.SubjectId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

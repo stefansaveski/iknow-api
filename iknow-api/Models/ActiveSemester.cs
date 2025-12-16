@@ -1,4 +1,6 @@
-using Microsoft.VisualBasic;
+
+
+
 
 namespace iknow_api.Models
 {
@@ -8,8 +10,8 @@ namespace iknow_api.Models
     }
     public class ActiveSemesters
     {
-        public int id { get; set; }
-        public int year { get; set; }
+        public int Id { get; set; }
+        public int Year { get; set; }
         public sType Type { get; set; }
         public ICollection<EnrolledSemesters>? EnrolledSemesters { get; set; }
     }

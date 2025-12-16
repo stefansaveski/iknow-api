@@ -13,6 +13,6 @@ namespace iknow_api.Repositories
         Task<User?> GetUserByIdAsync(int id);
         Task<List<EnrolledSemesters>?> GetUserSemestersAsync(int id);
         Task<User?> GetOnlyUserByIdAsync(int id);
-
+        Task<List<PassedSubject>> GetUserPassedSubjectsAsync(int id);
     }
 }

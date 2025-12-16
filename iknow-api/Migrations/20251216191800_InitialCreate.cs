@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace iknow_api.Migrations
 {
     /// <inheritdoc />
-    public partial class inital : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,14 +18,14 @@ namespace iknow_api.Migrations
                 name: "ActiveSemesters",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    year = table.Column<int>(type: "integer", nullable: false),
+                    Year = table.Column<int>(type: "integer", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ActiveSemesters", x => x.id);
+                    table.PrimaryKey("PK_ActiveSemesters", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -180,10 +180,11 @@ namespace iknow_api.Migrations
                     QuotaType = table.Column<int>(type: "integer", nullable: false),
                     MajorId = table.Column<int>(type: "integer", nullable: false),
                     StudentComment = table.Column<string>(type: "text", nullable: true),
-                    Node = table.Column<string>(type: "text", nullable: true),
+                    Note = table.Column<string>(type: "text", nullable: true),
                     CratedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     LastChange = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Veryfied = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Verified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    SemesterId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -192,7 +193,7 @@ namespace iknow_api.Migrations
                         name: "FK_EnrolledSemesters_ActiveSemesters_Id",
                         column: x => x.Id,
                         principalTable: "ActiveSemesters",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_EnrolledSemesters_Majors_MajorId",
@@ -214,8 +215,8 @@ namespace iknow_api.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    enrollmentYear = table.Column<int>(type: "integer", nullable: false),
-                    quota = table.Column<int>(type: "integer", nullable: false),
+                    EnrollmentYear = table.Column<int>(type: "integer", nullable: false),
+                    Quota = table.Column<int>(type: "integer", nullable: false),
                     MajorId = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     StudyType = table.Column<string>(type: "text", nullable: true),
@@ -255,6 +256,37 @@ namespace iknow_api.Migrations
                     table.ForeignKey(
                         name: "FK_HighSchool_User_UserId",
                         column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProfessorSubjects",
+                columns: table => new
+                {
+                    ProfessorId = table.Column<int>(type: "integer", nullable: false),
+                    SemesterId = table.Column<int>(type: "integer", nullable: false),
+                    SubjectId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProfessorSubjects", x => new { x.ProfessorId, x.SemesterId, x.SubjectId });
+                    table.ForeignKey(
+                        name: "FK_ProfessorSubjects_ActiveSemesters_SemesterId",
+                        column: x => x.SemesterId,
+                        principalTable: "ActiveSemesters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProfessorSubjects_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProfessorSubjects_User_ProfessorId",
+                        column: x => x.ProfessorId,
                         principalTable: "User",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -465,6 +497,16 @@ namespace iknow_api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProfessorSubjects_SemesterId",
+                table: "ProfessorSubjects",
+                column: "SemesterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProfessorSubjects_SubjectId",
+                table: "ProfessorSubjects",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_UserId",
                 table: "RefreshToken",
                 column: "UserId");
@@ -518,6 +560,9 @@ namespace iknow_api.Migrations
 
             migrationBuilder.DropTable(
                 name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "ProfessorSubjects");
 
             migrationBuilder.DropTable(
                 name: "RefreshToken");

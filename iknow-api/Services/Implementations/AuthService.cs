@@ -87,8 +87,8 @@ namespace iknow_api.Services
                 var enrollmentInfo = new EnrollmentInfo
                 {
                     UserId = userId,
-                    enrollmentYear = registerDto.enrollmentYear,
-                    quota = (Models.Quota)registerDto.quotaType,
+                    EnrollmentYear = registerDto.enrollmentYear,
+                    Quota = (Models.Quota)registerDto.quotaType,
                     MajorId = registerDto.majorType,
                     StudyStatus = registerDto.studyStatus,
                     StudyType = registerDto.studyType
