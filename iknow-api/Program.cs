@@ -8,6 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
+            ?? new[] { "http://localhost:3000" };
+        
+        policy.WithOrigins(allowedOrigins) // Your frontend URL(s)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -62,6 +78,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+// Enable CORS - must be called before UseAuthentication and UseAuthorization
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 app.UseAuthentication(); // <-- must come BEFORE UseAuthorization
