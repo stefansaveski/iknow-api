@@ -14,10 +14,67 @@ namespace iknow_api.Controllers
         {
             _userService = userService;
         }
+
+        //  "birthInfo": {
+        //    "placeOfBirth": "Скопје",
+        //    "municipalityOfBirth": "Скопје",
+        //    "country": "Република Северна Македонија"
+        //  },
+        //  "previousEducation": {
+        //    "type": "Гимназиско образование",
+        //    "profession": "",
+        //    "average": "54,857",
+        //    "language": "Македонски",
+        //    "country": "",
+        //    "previousUniversity": "Гимназиско образование",
+        //    "previousFaculty": "",
+        //    "previousStudyMode": ""
+        //  },
+        //  "enrollmentInfo": {
+        //    "enrollmentYear": "2023",
+        //    "status": "Редовен",
+        //    "cycle": "Прв циклус",
+        //    "program": "Примена на информациски технологии",
+        //    "quota": "Кофинансирање-Редовен (2023, 24600)",
+        //    "secondaryEducationNumber": "",
+        //    "previousEducationCredits": ""
+        //  },
+        //  "contact": {
+        //    "placeOfResidence": "Скопје",
+        //    "municipalityOfResidence": "Кисела Вода - Скопје",
+        //    "country": "Република Северна Македонија",
+        //    "address": "Драчево",
+        //    "temporaryAddress": "",
+        //    "phone": "",
+        //    "mobilePhone": "075295582",
+        //    "passportNumber": "",
+        //    "passportExpiryDate": "",
+        //    "email": "stefansaveski19@gmail.com",
+        //    "microsoftEmail": "stefan.saveski@students.finki.ukim.mk"
+        //  }
+        //}
         [Authorize]
         [HttpGet("getUser")]
         public async Task<IActionResult> getUser()
         {
+            //{
+            //  "personalInfo": {
+            //    "index": "233149/2023",
+            //    "embg": "/////////////",
+            //    "lastName": "Савески",
+            //    "middleName": "Дејан",
+            //    "firstName": "Стефан",
+            //    "maidenName": "",
+            //    "dateOfBirth": "19.08.2004",
+            //    "gender": "машки",
+            //    "nationality": "Македонец",
+            //    "citizenship": "Република Северна Македонија",
+            //    "scholarship": "Користи",
+            //    "currentPlan": "2023",
+            //    "registryNumber": "",
+            //    "notes": "Систематски преглед Студира 3 години",
+            //    "studyGroup": ""
+            //  },
             var authHeader = Request.Headers["Authorization"].ToString();
             if (authHeader.StartsWith("Bearer "))
             {
@@ -25,7 +82,67 @@ namespace iknow_api.Controllers
                 // token = your JWT
                 var userData = await _userService.GetUserData(token);
                 if (userData == null) return Ok(new { info = "can't get info" });
-                return Ok(new { User = userData });
+                var personalInfo = new
+                {
+                    index = userData.Index ?? "",
+                    embg = userData.EMBG ?? "",
+                    lastName = userData.Surname ?? "",
+                    middleName = userData.MiddleName ?? "",
+                    firstName = userData.Name ?? "",
+                    maidenName = "", // Property doesn't exist in User model
+                    dateOfBirth = userData.Bday.ToString("dd.MM.yyyy"),
+                    gender = userData.Gender ?? "",
+                    nationality = userData.Nationality ?? "",
+                    citizenship = userData.Citizenship ?? "",
+                    scholarship = "",
+                    currentPlan = userData.EnrollmentInfo?.EnrollmentYear.ToString() ?? "",
+                    registryNumber = "",
+                    notes = "",
+                    studyGroup = ""
+                };
+                var birthInfo = new
+                {
+                    placeOfBirth = userData.ContactInfo?.City ?? "",
+                    municipalityOfBirth = userData.ContactInfo?.Municipality ?? "",
+                    country = userData.Citizenship ?? ""
+                };
+                var previousEducation = new
+                {
+                    type = userData.HighSchool?.HighSchoolType.ToString() ?? "",
+                    profession = "",
+                    average = userData.HighSchool?.GPA.ToString() ?? "",
+                    language = userData.Nationality ?? "",
+                    country = userData.Nationality ?? "",
+                    previousUniversity = userData.HighSchool?.HighSchoolType.ToString() ?? "",
+                    previousFaculty = "", // Property doesn't exist in HighSchool model
+                    previousStudyMode = "" // Property doesn't exist in HighSchool model
+                };
+                var enrollmentInfo = new
+                {
+                    enrollmentYear = userData.EnrollmentInfo?.EnrollmentYear.ToString() ?? "",
+                    status = userData.EnrollmentInfo?.StudyStatus ?? "",
+                    cycle = "Прв циклус",
+                    program = userData.EnrollmentInfo?.Major?.Name ?? "",
+                    quota = userData.EnrollmentInfo?.Quota.ToString() ?? "",
+                    secondaryEducationNumber = "",
+                    previousEducationCredits = ""
+                };
+                var contact = new
+                {
+                    placeOfResidence = userData.ContactInfo?.City ?? "",
+                    municipalityOfResidence = userData.ContactInfo?.Municipality ?? "",
+                    country = userData.Citizenship ?? "",
+                    address = userData.ContactInfo?.Address ?? "",
+                    temporaryAddress = "",
+                    phone = "",
+                    mobilePhone = userData.ContactInfo?.PhoneNumber ?? "",
+                    passportNumber = "",
+                    passportExpiryDate = "",
+                    email = userData.Email ?? "",
+                    microsoftEmail = userData.ContactInfo?.MicrosoftEmail ?? ""
+                };
+                return Ok(new { personalInfo = personalInfo, birthInfo = birthInfo, previousEducation = previousEducation, enrollmentInfo = enrollmentInfo, contact = contact });
+                //return Ok(new { User = userData });
             }
             return null;
 
