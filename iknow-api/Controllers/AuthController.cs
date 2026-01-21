@@ -1,7 +1,6 @@
 ﻿using iknow_api.DTOs;
 using iknow_api.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 
 namespace iknow_api.Controllers
@@ -36,11 +35,9 @@ namespace iknow_api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto request)
         {
-            //Console.WriteLine(request);
-
             try
             {
-                var result = await _authService.RegisterAsync(request);
+                await _authService.RegisterAsync(request);
                 return Ok("User registered successfully");
             }
             catch (InvalidOperationException ex)
@@ -56,14 +53,20 @@ namespace iknow_api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto request)
         {
-            var token = await _authService.LoginAsync(request);
-            if (token == null) return Unauthorized("Invalid credentials");
-            return Ok(new { Token = token });
+            var result = await _authService.LoginAsync(request);
+            if (result == null) return Unauthorized("Invalid credentials");
+
+            return Ok(new
+            {
+                token = result.AccessToken,
+                refreshToken = result.RefreshToken,
+                role = result.Role
+            });
         }
 
         [Authorize]
         [HttpGet("getstring")]
-        public async Task<IActionResult> getstring()
+        public IActionResult getstring()
         {
             return Ok(new { message = "You are authorized!" });
         }
@@ -72,9 +75,11 @@ namespace iknow_api.Controllers
         public async Task<IActionResult> VerifyToken([FromBody] VerifyRefreshTokenDto verifyRefreshToken)
         {
             if (await _refreshTokenService.VerifyRefreshToken(verifyRefreshToken))
-            { return Ok(await _authService.GenerateNewJWT(verifyRefreshToken)); }
-            else
-            { return BadRequest(new { message = "No token found!" }); }
+            {
+                return Ok(await _authService.GenerateNewJWT(verifyRefreshToken));
+            }
+
+            return BadRequest(new { message = "No token found!" });
         }
 
     }
