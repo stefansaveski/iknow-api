@@ -2,13 +2,11 @@
 using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
-using iknow_api.Services;
 using iknow_api.Models;
 using iknow_api.DTOs;
 using iknow_api.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using iknow_api.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace iknow_api.Services
 {
@@ -124,9 +122,10 @@ namespace iknow_api.Services
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
                 return null;
 
-             var result = new AuthResultDto
+            var result = new AuthResultDto
             {
-                AccessToken = CreateToken(user)
+                AccessToken = CreateToken(user),
+                Role = user.Role.ToString()
             };
 
             if (loginDto.GenerateRefreshToken)
@@ -145,14 +144,16 @@ namespace iknow_api.Services
         public async Task<AuthResultDto> GenerateNewJWT(VerifyRefreshTokenDto token)
         {
             int userid = await _refreshTokenRepository.GetUserId(token.token) ?? 0;
-            User ?user = await _userRepository.GetOnlyUserByIdAsync(userid);
+            User? user = await _userRepository.GetOnlyUserByIdAsync(userid);
 
-            var result = new AuthResultDto
+            if (user == null)
+                throw new InvalidOperationException("User not found for provided refresh token.");
+
+            return new AuthResultDto
             {
-                AccessToken = CreateToken(user) 
+                AccessToken = CreateToken(user),
+                Role = user.Role.ToString()
             };
-            
-            return result;
         }
 
         private string CreateToken(User user)
@@ -171,7 +172,7 @@ namespace iknow_api.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(keyString));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(
+            var jwt = new JwtSecurityToken(
                 issuer: "iknow-api",
                 audience: "iknow-api",
                 claims: claims,
@@ -179,7 +180,7 @@ namespace iknow_api.Services
                 signingCredentials: creds
             );
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
     }
 }
