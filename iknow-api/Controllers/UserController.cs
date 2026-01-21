@@ -6,6 +6,7 @@ using iknow_api.Services;
 namespace iknow_api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class UserController : Controller
     {
@@ -53,7 +54,7 @@ namespace iknow_api.Controllers
         //    "microsoftEmail": "stefan.saveski@students.finki.ukim.mk"
         //  }
         //}
-        [Authorize]
+        
         [HttpGet("getUser")]
         public async Task<IActionResult> getUser()
         {
@@ -147,7 +148,7 @@ namespace iknow_api.Controllers
             return null;
 
         }
-        [Authorize]
+        
         [HttpGet("getSemesters")]
         public async Task<IActionResult> getSemesters()
         {
@@ -192,7 +193,7 @@ namespace iknow_api.Controllers
             return null;
         }
 
-        [Authorize]
+        
         [HttpGet("getSubjects")]
         public async Task<IActionResult> getSubjects()
         {
@@ -286,7 +287,7 @@ namespace iknow_api.Controllers
             return Ok(new { semesters = results, currentSemestar = semesterData, subjectsBySemester = subjectsBySemester });
         }
 
-        [Authorize]
+        
         [HttpGet("getPassedSubjects")]
         public async Task<IActionResult> getPassedSubjects()
         {

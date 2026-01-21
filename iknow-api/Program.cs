@@ -45,7 +45,9 @@ builder.Services.AddAuthentication(options =>
 
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role
     };
 });
 // Add services to the container.
