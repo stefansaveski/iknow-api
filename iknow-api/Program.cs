@@ -72,6 +72,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>(); 
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>(); 
+builder.Services.AddScoped<IProfService, ProfService>();
+builder.Services.AddScoped<IProfRepository, ProfRepository>();
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

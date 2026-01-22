@@ -25,14 +25,14 @@ namespace iknow_api.Controllers
         [HttpGet("test")]
         public ActionResult<string> Test()
         {
-            var profId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var profId = User.FindFirstValue("id");
             return Ok(profId);
         }
 
         [HttpGet("subjects")]
         public async Task<ActionResult<List<SubjectsAndUsers>>> GetStudents()
         {
-            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var idClaim = User.FindFirstValue("id");
             if (!int.TryParse(idClaim, out var profId))
                 return Unauthorized();
 

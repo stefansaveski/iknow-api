@@ -76,6 +76,7 @@ namespace iknow_api.Repositories
                 .Where(ss => ss.ProfessorId == profId)
                 .Include(ss => ss.Subject)
                 .Include(ss => ss.User)
+                .Include(ss => ss.PassedSubject)
                 .ToListAsync();
 
             var grouped = query
@@ -88,8 +89,10 @@ namespace iknow_api.Repositories
                         .Where(x => x.User != null)
                         .Select(x => new UsersBySubject
                         {
-                            UserId = x.User!.Id
-                            // ...add more mappings here if needed by the DTO...
+                            UserId = x.User!.Id,
+                            UserName = x.User.Name, // Use Name property for UserName
+                            Grade = x.PassedSubject != null ? (int)x.PassedSubject.Grade : 0,
+                            GradeId = x.PassedSubject != null ? x.PassedSubject.Id : 0
                         })
                         .GroupBy(u => u.UserId)
                         .Select(ug => ug.First())
