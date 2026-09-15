@@ -13,8 +13,8 @@ namespace iknow_api.Models
         public string? StudentComment { get; set; }
         public string? Note { get; set; }
         public DateTime CratedAt { get; set; }
-        public DateTime LastChange { get; set; }
-        public DateTime Verified { get; set; }
+        public DateTime? LastChange { get; set; }
+        public DateTime? Verified { get; set; }
         public int SemesterId { get; set; }
         public ActiveSemesters? Semester { get; set; }
         public Major? Major { get; set; }

@@ -9,6 +9,7 @@ namespace iknow_api.Models
         public int UserId { get; set; }
         public User? User { get; set; }
         public int EnrollmentInfoId { get; set; }
+        public int Amount { get; set; }
         public EnrolledSemesters? EnrolledSemesters { get; set; }
 
     }

@@ -30,7 +30,7 @@ namespace iknow_api.Services
             {
                 Token = refreshToken,
                 UserId = userid,
-                ExpiresAt = DateTime.UtcNow.AddMonths(1),
+                ExpiresAt = DateTime.SpecifyKind(DateTime.UtcNow.AddMonths(1), DateTimeKind.Unspecified),
                 IsValid = true
             };
 

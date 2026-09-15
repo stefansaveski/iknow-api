@@ -1,5 +1,3 @@
-
-
 namespace iknow_api.Models
 {
     public enum UserRole
@@ -9,32 +7,33 @@ namespace iknow_api.Models
         Student
     }
 
+    // Attributes follow the Users entity in the ER model exactly.
     public class User
     {
-        internal object Payments;
-
         public int Id { get; set; }
         public string? Name { get; set; }
-        public string? EMBG {get; set; }
+        public string? EMBG { get; set; }
         public string? Surname { get; set; }
         public string? Index { get; set; }
         public string? Email { get; set; }
         public string? PasswordHash { get; set; }
-        public string? MiddleName { get; set; }
-        public string? Gender { get; set; }
-        public string? Nationality { get; set; }
-        public string? Citizenship { get; set; }
-        public DateTime Bday { get; set; }
+        public DateTime? Bday { get; set; }
         public DateTime CreatedAt { get; set; }
         public UserRole Role { get; set; }
+        public Quota? Quota { get; set; }
+        public int? EnrollmentYear { get; set; }
+
         public HighSchool? HighSchool { get; set; }
         public ContactInfo? ContactInfo { get; set; }
-        public EnrollmentInfo? EnrollmentInfo { get; set; }
         public ICollection<UserDocuments>? Documents { get; set; }
-        public ICollection<Payment>? EnrolledSemesters { get; set; }
-        public ICollection<SemesterSubject>? EnrolledSemesterUserSubjects { get; set; }
 
+        // Named for the relationship it carries: Users 1 --pays-- N Payment.
+        public ICollection<Payment>? Payments { get; set; }
+
+        // Users 1 --submits-- N EnrolledSemesters
+        public ICollection<EnrolledSemesters>? Enrolments { get; set; }
+
+        // Users 1 --teaches-- N SemestersSubjects
         public ICollection<SemesterSubject>? TeachingSubjects { get; set; }
-
     }
 }

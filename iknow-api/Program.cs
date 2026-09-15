@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using iknow_api.Data;
+using iknow_api.Models;
 using iknow_api.Repositories;
 using iknow_api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -58,9 +59,23 @@ builder.Services.AddControllers()
     });
 builder.Services.AddOpenApi();
 
-// Register DbContext
+// Register DbContext.
+// The database lives behind the SSH tunnel: tunnel_scripta.cmd maps
+// localhost:9999 to the faculty Postgres server. Start it before the API.
+// The enum labels come from sql/ddl.sql, so each CLR enum is mapped onto its
+// Postgres type by name; PgEnumLabels covers the members whose label is not
+// simply the lowercased member name.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsql =>
+        {
+            npgsql.MapEnum<UserRole>("user_role", AppDbContext.ProjectSchema, PgEnumLabels.UserRole);
+            npgsql.MapEnum<HighSchoolType>("hs_type", AppDbContext.ProjectSchema, PgEnumLabels.Lowercase);
+            npgsql.MapEnum<Quota>("quota_type", AppDbContext.ProjectSchema, PgEnumLabels.Lowercase);
+            npgsql.MapEnum<sType>("semester_type", AppDbContext.ProjectSchema, PgEnumLabels.Lowercase);
+            npgsql.MapEnum<Grade>("grade_type", AppDbContext.ProjectSchema, PgEnumLabels.Grade);
+        }));
 
 // Register your services
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -70,6 +85,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>(); 
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>(); 
+builder.Services.AddScoped<IProfRepository, ProfRepository>();
+builder.Services.AddScoped<IProfService, ProfService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

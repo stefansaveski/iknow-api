@@ -1,4 +1,5 @@
-﻿using iknow_api.DTOs;
+using iknow_api.DTOs;
+using iknow_api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using iknow_api.Services;
@@ -82,20 +83,30 @@ namespace iknow_api.Controllers
                 // token = your JWT
                 var userData = await _userService.GetUserData(token);
                 if (userData == null) return Ok(new { info = "can't get info" });
+
+                // The study programme comes from the student's most recent
+                // enrolment. Within an academic year winter precedes summer,
+                // so order by year first and put winter ahead of summer.
+                var currentEnrolment = userData.Enrolments?
+                    .Where(es => es.Semester != null)
+                    .OrderByDescending(es => es.Semester!.Year)
+                    .ThenByDescending(es => es.Semester!.Type == sType.summer)
+                    .FirstOrDefault();
+
                 var personalInfo = new
                 {
                     index = userData.Index ?? "",
                     embg = userData.EMBG ?? "",
                     lastName = userData.Surname ?? "",
-                    middleName = userData.MiddleName ?? "",
+                    middleName = "", // Not an attribute of Users in the ER model
                     firstName = userData.Name ?? "",
                     maidenName = "", // Property doesn't exist in User model
-                    dateOfBirth = userData.Bday.ToString("dd.MM.yyyy"),
-                    gender = userData.Gender ?? "",
-                    nationality = userData.Nationality ?? "",
-                    citizenship = userData.Citizenship ?? "",
+                    dateOfBirth = userData.Bday?.ToString("dd.MM.yyyy") ?? "",
+                    gender = "", // Not an attribute of Users in the ER model
+                    nationality = "", // Not an attribute of Users in the ER model
+                    citizenship = "", // Not an attribute of Users in the ER model
                     scholarship = "",
-                    currentPlan = userData.EnrollmentInfo?.EnrollmentYear.ToString() ?? "",
+                    currentPlan = userData.EnrollmentYear?.ToString() ?? "",
                     registryNumber = "",
                     notes = "",
                     studyGroup = ""
@@ -104,26 +115,26 @@ namespace iknow_api.Controllers
                 {
                     placeOfBirth = userData.ContactInfo?.City ?? "",
                     municipalityOfBirth = userData.ContactInfo?.Municipality ?? "",
-                    country = userData.Citizenship ?? ""
+                    country = "" // Not an attribute of Users in the ER model
                 };
                 var previousEducation = new
                 {
                     type = userData.HighSchool?.HighSchoolType.ToString() ?? "",
                     profession = "",
                     average = userData.HighSchool?.GPA.ToString() ?? "",
-                    language = userData.Nationality ?? "",
-                    country = userData.Nationality ?? "",
+                    language = "", // Not an attribute of HighSchool in the ER model
+                    country = "",
                     previousUniversity = userData.HighSchool?.HighSchoolType.ToString() ?? "",
                     previousFaculty = "", // Property doesn't exist in HighSchool model
                     previousStudyMode = "" // Property doesn't exist in HighSchool model
                 };
                 var enrollmentInfo = new
                 {
-                    enrollmentYear = userData.EnrollmentInfo?.EnrollmentYear.ToString() ?? "",
-                    status = userData.EnrollmentInfo?.StudyStatus ?? "",
+                    enrollmentYear = userData.EnrollmentYear?.ToString() ?? "",
+                    status = "", // Not an attribute of Users in the ER model
                     cycle = "Прв циклус",
-                    program = userData.EnrollmentInfo?.Major?.Name ?? "",
-                    quota = userData.EnrollmentInfo?.Quota.ToString() ?? "",
+                    program = currentEnrolment?.Major?.Name ?? "",
+                    quota = userData.Quota?.ToString() ?? "",
                     secondaryEducationNumber = "",
                     previousEducationCredits = ""
                 };
@@ -131,7 +142,7 @@ namespace iknow_api.Controllers
                 {
                     placeOfResidence = userData.ContactInfo?.City ?? "",
                     municipalityOfResidence = userData.ContactInfo?.Municipality ?? "",
-                    country = userData.Citizenship ?? "",
+                    country = "", // Not an attribute of Users in the ER model
                     address = userData.ContactInfo?.Address ?? "",
                     temporaryAddress = "",
                     phone = "",
@@ -164,16 +175,18 @@ namespace iknow_api.Controllers
                     var newResult = new
                     {
                         id = userData[i].Id,
-                        semester = (userData[i].Semester.Type == 0 ? "Зимски" : "Летен") + $"({userData[i].Semester.Year}/{userData[i].Semester.Year + 1})",
+                        // sType declares summer first, so compare against the member
+                        // rather than the ordinal - == 0 meant summer, not winter.
+                        semester = (userData[i].Semester.Type == sType.winter ? "Зимски" : "Летен") + $"({userData[i].Semester.Year}/{userData[i].Semester.Year + 1})",
                         direction = userData[i].Major?.Name ?? "",
                         quota = userData[i].QuotaType.ToString(),
-                        note = "",
-                        studentCom = "",
+                        note = userData[i].Note ?? "",
+                        studentCom = userData[i].StudentComment ?? "",
                         sum = "0,00",
                         paid = "0,00",
                         ukim = "",
-                        createdOn = DateTime.Now.ToString("dd.MM.yyyy"),
-                        dateChanged = DateTime.Now.ToString("dd.MM.yyyy"),
+                        createdOn = userData[i].CratedAt.ToString("dd.MM.yyyy"),
+                        dateChanged = userData[i].LastChange?.ToString("dd.MM.yyyy") ?? "",
                         credits = "0,00",
                         type = "Ред.",
                         doc = "Не",
@@ -182,7 +195,7 @@ namespace iknow_api.Controllers
                         taxes = "0,00",
                         signatures = "0/5",
                         status = "валиден",
-                        completed = "Не"
+                        completed = userData[i].Verified.HasValue ? "Да" : "Не"
                     };
                     results.Add(newResult);
                 }
@@ -207,7 +220,7 @@ namespace iknow_api.Controllers
                 var newResult = new
                 {
                     id = userData[i].Id,
-                    name = (userData[i].Semester.Type == 0 ? "Зимски" : "Летен") + $"({userData[i].Semester.Year}/{userData[i].Semester.Year + 1})",
+                    name = (userData[i].Semester.Type == sType.winter ? "Зимски" : "Летен") + $"({userData[i].Semester.Year}/{userData[i].Semester.Year + 1})",
                     status = "валиден",
                     serviceNumber = 1000000 + random.Next(10000, 100000)
                 };
@@ -220,7 +233,7 @@ namespace iknow_api.Controllers
             foreach (var enrollment in userData)
             {
                 // Create semester key like "winter_2025_2026" or "summer_2025_2026"
-                var semesterType = enrollment.Semester.Type == 0 ? "winter" : "summer";
+                var semesterType = enrollment.Semester.Type == sType.winter ? "winter" : "summer";
                 var semesterKey = $"{semesterType}_{enrollment.Semester.Year}_{enrollment.Semester.Year + 1}";
 
                 // Initialize list if this semester key doesn't exist
@@ -257,11 +270,11 @@ namespace iknow_api.Controllers
                 
             }
             var currentSemester = userData.FirstOrDefault(); // Get the most recent/current semester
-            var semesterTypeGlobal = currentSemester.Semester.Type == 0 ? "winter" : "summer";
+            var semesterTypeGlobal = currentSemester.Semester.Type == sType.winter ? "winter" : "summer";
             var semesterData = new
             {
                 id = $"{semesterTypeGlobal}_{currentSemester.Semester.Year}_{currentSemester.Semester.Year + 1}",
-                name = (currentSemester.Semester.Type == 0 ? "Зимски" : "Летен") + $" ({currentSemester.Semester.Year}/{currentSemester.Semester.Year + 1})",
+                name = (currentSemester.Semester.Type == sType.winter ? "Зимски" : "Летен") + $" ({currentSemester.Semester.Year}/{currentSemester.Semester.Year + 1})",
                 status = "валиден",
                 serviceNumber = (1000000 + random.Next(10000, 100000)).ToString(),
                 ticketNumber = random.Next(100000, 1000000).ToString(),
@@ -317,7 +330,7 @@ namespace iknow_api.Controllers
                         gradeText = passed.Grade.ToString(),
                         date = passed.DatePassed.ToString("dd.MM.yyyy"),
                         semester = passed.SemesterSubject.EnrolledSemester?.Semester != null
-                            ? (passed.SemesterSubject.EnrolledSemester.Semester.Type == 0 ? "Зимски" : "Летен") + 
+                            ? (passed.SemesterSubject.EnrolledSemester.Semester.Type == sType.winter ? "Зимски" : "Летен") + 
                               $" ({passed.SemesterSubject.EnrolledSemester.Semester.Year}/{passed.SemesterSubject.EnrolledSemester.Semester.Year + 1})"
                             : "",
                         professor = passed.SemesterSubject.Professor != null

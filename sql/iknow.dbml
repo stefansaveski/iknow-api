@@ -1,0 +1,207 @@
+// IKnow / FINKI - dbdiagram.io (DBML) source
+// Generated from schema_creation.sql, which is the source of truth.
+// Paste into https://dbdiagram.io to render the relational diagram.
+
+Enum project.user_role {
+  student
+  prof
+  admin
+}
+
+Enum project.hs_type {
+  strucen
+  gimnazija
+}
+
+Enum project.quota_type {
+  privatna
+  drzavna
+  stipendija
+}
+
+Enum project.semester_type {
+  summer
+  winter
+}
+
+Enum project.grade_type {
+  "6"
+  "7"
+  "8"
+  "9"
+  "10"
+}
+
+Table project.users {
+  id integer [pk, increment]
+  name varchar(100) [not null]
+  embg varchar(13)
+  surname varchar(100) [not null]
+  index varchar(20)
+  bday timestamp
+  email varchar(150) [not null, unique]
+  password varchar(255) [not null]
+  role project.user_role [not null]
+  quota project.quota_type
+  enrollment_year integer
+  created_at timestamp [not null, default: `now()`]
+}
+
+Table project.high_school {
+  id integer [pk, increment]
+  user_id integer [not null, unique]
+  gpa real [not null]
+  type project.hs_type [not null]
+}
+
+Table project.contact {
+  id integer [pk, increment]
+  user_id integer [not null, unique]
+  city varchar(100) [not null]
+  municipality varchar(100) [not null]
+  address varchar(150) [not null]
+  number varchar(20) [not null]
+  microsoft_email varchar(150)
+}
+
+Table project.major {
+  id integer [pk, increment]
+  name varchar(150) [not null]
+}
+
+Table project.active_semesters {
+  id integer [pk, increment]
+  year integer [not null]
+  type project.semester_type [not null]
+
+  indexes {
+    (year, type) [unique]
+  }
+}
+
+Table project.subjects {
+  id integer [pk, increment]
+  name varchar(150) [not null, unique]
+  code varchar(30) [not null, unique]
+  awarded_credits integer [not null]
+  dependency_credit integer
+}
+
+Table project.enrolled_semesters {
+  id integer [pk, increment]
+  user_id integer [not null]
+  quota project.quota_type [not null]
+  major_id integer [not null]
+  note varchar(255)
+  student_comment varchar(255)
+  created_at timestamp [not null, default: `now()`]
+  last_change timestamp
+  completed timestamp
+  semester_id integer [not null]
+
+  indexes {
+    (user_id, semester_id) [unique]
+  }
+}
+
+Table project.semesters_subjects {
+  id integer [pk, increment]
+  enrolled_semesters_id integer [not null]
+  subjects_id integer [not null]
+  professor_id integer [not null]
+  signature boolean [not null, default: false]
+
+  indexes {
+    (enrolled_semesters_id, subjects_id) [unique]
+  }
+}
+
+Table project.passed_subjects {
+  id integer [pk, increment]
+  enrolled_id integer [not null, unique]
+  grade project.grade_type [not null]
+  date_passed timestamp [not null]
+}
+
+Table project.documents {
+  id integer [pk, increment]
+  type varchar(100) [not null]
+  body text [not null]
+  cost integer [not null]
+}
+
+Table project.user_documents {
+  user_id integer [not null]
+  document_id integer [not null]
+
+  indexes {
+    (user_id, document_id) [pk]
+  }
+}
+
+Table project.token {
+  id integer [pk, increment]
+  user_id integer [not null]
+  token varchar(255) [not null]
+  expires_at timestamp [not null]
+  is_valid boolean [not null, default: true]
+}
+
+Table project.payment {
+  id integer [pk, increment]
+  user_id integer [not null]
+  enrollment_id integer [not null]
+  amount integer [not null]
+}
+
+Table project.major_subjects {
+  major_id integer [not null]
+  subject_id integer [not null]
+  mandatory_semester integer [not null]
+
+  indexes {
+    (major_id, subject_id) [pk]
+  }
+}
+
+Table project.dependency_subject {
+  subject_id integer [not null]
+  dependency_id integer [not null]
+
+  indexes {
+    (subject_id, dependency_id) [pk]
+  }
+}
+
+Table project.professour_subjects {
+  prof_id integer [not null]
+  active_semester_id integer [not null]
+  subject_id integer [not null]
+
+  indexes {
+    (prof_id, active_semester_id, subject_id) [pk]
+  }
+}
+
+// ---------- Relationships ----------
+Ref: project.high_school.user_id - project.users.id                  // has_hs (1:1)
+Ref: project.contact.user_id - project.users.id                      // has_contact (1:1)
+Ref: project.token.user_id > project.users.id                        // has_token
+Ref: project.payment.user_id > project.users.id                      // pays
+Ref: project.payment.enrollment_id > project.enrolled_semesters.id   // for_enrollment
+Ref: project.enrolled_semesters.user_id > project.users.id           // submits
+Ref: project.enrolled_semesters.major_id > project.major.id          // for_major
+Ref: project.enrolled_semesters.semester_id > project.active_semesters.id // during
+Ref: project.semesters_subjects.enrolled_semesters_id > project.enrolled_semesters.id // contains
+Ref: project.semesters_subjects.subjects_id > project.subjects.id    // taken_in
+Ref: project.semesters_subjects.professor_id > project.users.id      // teaches
+Ref: project.passed_subjects.enrolled_id - project.semesters_subjects.id // results_in (1:1)
+Ref: project.user_documents.user_id > project.users.id               // owns
+Ref: project.user_documents.document_id > project.documents.id       // owns
+Ref: project.major_subjects.major_id > project.major.id              // includes
+Ref: project.major_subjects.subject_id > project.subjects.id         // includes
+Ref: project.dependency_subject.subject_id > project.subjects.id     // requires (dependent)
+Ref: project.dependency_subject.dependency_id > project.subjects.id  // requires (prerequisite)
+Ref: project.professour_subjects.prof_id > project.users.id          // teaches_subject
+Ref: project.professour_subjects.active_semester_id > project.active_semesters.id // teaches_subject
+Ref: project.professour_subjects.subject_id > project.subjects.id    // teaches_subject

@@ -1,4 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
@@ -50,21 +50,21 @@ namespace iknow_api.Services
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+                // quota and enrollment_year are attributes of Users in the ER
+                // model, so they are set here rather than on a separate entity.
                 var user = new User
                 {
                     Name = registerDto.Name,
-                    MiddleName = registerDto.MiddleName,
                     Surname = registerDto.Surname,
                     Index = registerDto.Index,
                     Email = registerDto.Email,
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password),
-                    Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Utc),
-                    CreatedAt = DateTime.UtcNow,
+                    Bday = DateTime.SpecifyKind(registerDto.Bday, DateTimeKind.Unspecified),
+                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     Role = (Models.UserRole)registerDto.Role,
                     EMBG = registerDto.EMBG,
-                    Nationality = registerDto.nationality,
-                    Citizenship = registerDto.citizenship,
-                    Gender = registerDto.gender
+                    Quota = (Models.Quota)registerDto.quotaType,
+                    EnrollmentYear = registerDto.enrollmentYear
                 };
 
                 _context.User.Add(user);
@@ -82,16 +82,6 @@ namespace iknow_api.Services
                     MicrosoftEmail = registerDto.microsoftEmail
                 };
                 
-                var enrollmentInfo = new EnrollmentInfo
-                {
-                    UserId = userId,
-                    EnrollmentYear = registerDto.enrollmentYear,
-                    Quota = (Models.Quota)registerDto.quotaType,
-                    MajorId = registerDto.majorType,
-                    StudyStatus = registerDto.studyStatus,
-                    StudyType = registerDto.studyType
-                };
-                
                 var highSchool = new HighSchool
                 {
                     UserId = userId,
@@ -100,7 +90,6 @@ namespace iknow_api.Services
                 };
 
                 _context.ContactInfo.Add(contactInfo);
-                _context.EnrollmentInfo.Add(enrollmentInfo);
                 _context.HighSchool.Add(highSchool);
                 
                 // Save all related entities in a single transaction

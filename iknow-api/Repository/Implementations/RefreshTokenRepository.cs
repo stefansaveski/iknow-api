@@ -40,7 +40,7 @@ namespace iknow_api.Repositories
                 .FirstOrDefaultAsync(rt =>
                     rt.Token == refreshTokenDto.token &&
                     rt.IsValid &&
-                    rt.ExpiresAt > DateTime.UtcNow);
+                    rt.ExpiresAt > DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified));
 
             return token != null;
         }
