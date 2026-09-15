@@ -1,0 +1,14 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=9999;Database=db_202526z_va_prj_know2026;Username=db_202526z_va_prj_iknow2026_owner;Password=YOUR_DB_PASSWORD_HERE;Search Path=project;Include Error Detail=true"
+  },
+  "Jwt": {
+    "Key": "ANY_LOCAL_SIGNING_KEY_AT_LEAST_32_CHARACTERS_LONG"
+  }
+}

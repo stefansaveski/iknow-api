@@ -27,8 +27,14 @@ namespace iknow_api.Repositories
         {
             return await _context.User
                 .Include(u => u.ContactInfo)
-                .Include(u => u.EnrollmentInfo)
                 .Include(u => u.HighSchool)
+                // The study programme is reached through the enrolment, since
+                // Major hangs off EnrolledSemesters rather than off Users.
+                .Include(u => u.Enrolments!)
+                    .ThenInclude(es => es.Major)
+                .Include(u => u.Enrolments!)
+                    .ThenInclude(es => es.Semester)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(u => u.Id == id);
         }
 
@@ -47,11 +53,6 @@ namespace iknow_api.Repositories
             _context.ContactInfo.Add(contactInfo);
             await _context.SaveChangesAsync();
         }
-        public async Task AddEnrollmentAsync(EnrollmentInfo enrollment)
-        {
-            _context.EnrollmentInfo.Add(enrollment);
-            await _context.SaveChangesAsync();
-        }   
         public async Task AddHighSchoolAsync(HighSchool highSchool)
         {
             _context.HighSchool.Add(highSchool);
@@ -88,7 +89,9 @@ namespace iknow_api.Repositories
                         .ThenInclude(es => es.Semester)
                 .Include(ps => ps.SemesterSubject)
                     .ThenInclude(ss => ss.Professor)
-                .Where(ps => ps.SemesterSubject.UserId == id)
+                // The ER model reaches the student through the enrolment,
+                // not through a user_id on semesters_subjects.
+                .Where(ps => ps.SemesterSubject.EnrolledSemester.UserId == id)
                 .ToListAsync();
         }
 
