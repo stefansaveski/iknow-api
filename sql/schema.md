@@ -110,7 +110,6 @@ erDiagram
 
     payment {
         integer id PK
-        integer user_id FK
         integer enrollment_id FK
         integer amount
     }
@@ -135,7 +134,6 @@ erDiagram
     users               ||--o| high_school        : has_hs
     users               ||--o| contact            : has_contact
     users               ||--o{ token              : has_token
-    users               ||--o{ payment            : pays
     users               ||--o{ enrolled_semesters : submits
     users               ||--o{ user_documents     : owns
     documents           ||--o{ user_documents     : owned_by
@@ -183,3 +181,6 @@ erDiagram
   dependent subject and `dependency_id` the prerequisite, with a `CHECK` that
   they differ.
 - `professour_subjects` keeps the spelling used by the table in `schema_creation.sql`.
+- `payment` has no `user_id`: the student is reached through `enrollment_id`.
+  Storing it twice violated BCNF (`enrolled_id -> user_id`) and allowed a
+  payment to contradict the enrolment it refers to. Removed in Phase 5.
