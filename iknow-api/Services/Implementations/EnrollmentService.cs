@@ -2,6 +2,7 @@ using iknow_api.Data;
 using iknow_api.DTOs;
 using iknow_api.Models;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace iknow_api.Services
 {
@@ -219,12 +220,26 @@ namespace iknow_api.Services
                     EnrolledSemesterId = enrolment.Id
                 };
             }
+            catch (DbUpdateException ex) when (IsUniqueViolation(ex))
+            {
+                // Two enrolments for the same semester sent at the same time both
+                // pass the check above, because each transaction reads the state
+                // from before the other one wrote. UNIQUE (user_id, semester_id)
+                // is what actually settles it, so the loser gets the same
+                // sentence as if the check had caught it.
+                await transaction.RollbackAsync();
+                return Fail("You are already enrolled in that semester.");
+            }
             catch
             {
                 await transaction.RollbackAsync();
                 throw;
             }
         }
+
+        /// <summary>23505 is unique_violation.</summary>
+        private static bool IsUniqueViolation(DbUpdateException ex) =>
+            ex.InnerException is PostgresException { SqlState: "23505" };
 
         private static EnrollSemesterResultDto Fail(string message) =>
             new() { Ok = false, Message = message };
