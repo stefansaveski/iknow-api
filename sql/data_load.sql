@@ -114,11 +114,11 @@ INSERT INTO token (id, user_id, token, expires_at, is_valid) VALUES
 (2, 2, 'tok_def456_boris',  '2026-08-01 00:00:00', TRUE),
 (3, 1, 'tok_old789_stefan', '2026-01-01 00:00:00', FALSE);
 
-INSERT INTO payment (id, user_id, enrollment_id, amount) VALUES
-(1, 1, 1, 200),
-(2, 1, 2, 200),
-(3, 2, 3, 400),
-(4, 3, 4, 200);
+INSERT INTO payment (id, enrollment_id, amount) VALUES
+(1, 1, 200),
+(2, 2, 200),
+(3, 3, 400),
+(4, 4, 200);
 
 INSERT INTO major_subjects (major_id, subject_id, mandatory_semester) VALUES
 (1, 1, 1), (1, 9, 1), (1, 10, 1), (1, 11, 1), (1, 12, 1),

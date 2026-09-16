@@ -149,7 +149,6 @@ Table project.token {
 
 Table project.payment {
   id integer [pk, increment]
-  user_id integer [not null]
   enrollment_id integer [not null]
   amount integer [not null]
 }
@@ -187,7 +186,6 @@ Table project.professour_subjects {
 Ref: project.high_school.user_id - project.users.id                  // has_hs (1:1)
 Ref: project.contact.user_id - project.users.id                      // has_contact (1:1)
 Ref: project.token.user_id > project.users.id                        // has_token
-Ref: project.payment.user_id > project.users.id                      // pays
 Ref: project.payment.enrollment_id > project.enrolled_semesters.id   // for_enrollment
 Ref: project.enrolled_semesters.user_id > project.users.id           // submits
 Ref: project.enrolled_semesters.major_id > project.major.id          // for_major
