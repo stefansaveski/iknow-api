@@ -1,0 +1,185 @@
+{
+  "documentTypes": [
+    {
+      "id": "select_document",
+      "name": "Изберете документ",
+      "price": 0
+    },
+    {
+      "id": "administrative_regulation",
+      "name": "Барање за административно регулирање на ретроактивен семестар (од 2024г) ( 1000)",
+      "price": 1000
+    },
+    {
+      "id": "exam_application_satisfaction",
+      "name": "Барање за задочно пријавување на испит (од 2024г) ( 1000)",
+      "price": 1000
+    },
+    {
+      "id": "semester_enrollment_after_deadline",
+      "name": "Барање за запишување на семестар по истек на рок (од 2024г) ( 1500)",
+      "price": 1500
+    },
+    {
+      "id": "certificate_issuance_various",
+      "name": "Барање за издавање потврди по разни основи (од 2024г) ( 1500)",
+      "price": 1500
+    },
+    {
+      "id": "student_status_verification",
+      "name": "Барање за мирување на студиите (од 2024г) ( 2000)",
+      "price": 2000
+    },
+    {
+      "id": "diploma_thesis_postponement",
+      "name": "Барање за откажување на пријавена тема за дипломска работа (од 2024г) ( 1000)",
+      "price": 1000
+    },
+    {
+      "id": "diploma_package",
+      "name": "Барање за пакет за дипломирање (од 2024г) (6200)",
+      "price": 6200
+    },
+    {
+      "id": "exam_postponement",
+      "name": "Барање за поништување на испит (од 2024г) ( 2000)",
+      "price": 2000
+    },
+    {
+      "id": "regular_student_certificate",
+      "name": "Барање за потврда за редовен студент (хартиена) ( 100)",
+      "price": 100
+    },
+    {
+      "id": "study_continuation_verification",
+      "name": "Барање за продолжување на студии во мирување (од 2024г) ( 2000)",
+      "price": 2000
+    },
+    {
+      "id": "failed_subject_grade_change",
+      "name": "Барање за промена на изборен предмет (од 2024г) ( 1500)",
+      "price": 1500
+    },
+    {
+      "id": "passed_subject_grade_change",
+      "name": "Барање за промена на положен предмет (од 2024г) ( 0)",
+      "price": 0
+    },
+    {
+      "id": "study_program_change_same_accreditation",
+      "name": "Барање за промена на студиска програма од иста акредитација (од 2024г) ( 2000)",
+      "price": 2000
+    },
+    {
+      "id": "study_program_change_new_accreditation",
+      "name": "Барање за промена на студиска програма од понова акредитација (од 2024г) ( 3000)",
+      "price": 3000
+    },
+    {
+      "id": "diploma_supplement",
+      "name": "Додаток на диплома ( 0)",
+      "price": 0
+    },
+    {
+      "id": "diploma_supplement_second_cycle",
+      "name": "Додаток на диплома (втор циклус) ( 0)",
+      "price": 0
+    },
+    {
+      "id": "mksa",
+      "name": "МКСА ( 750)",
+      "price": 750
+    },
+    {
+      "id": "exam_recognition",
+      "name": "Признавање на положени испити ( 0)",
+      "price": 0
+    },
+    {
+      "id": "student_card_old",
+      "name": "Студентски картон (Старо) ( 0)",
+      "price": 0
+    }
+  ],
+  "documents": [
+    {
+      "id": 1,
+      "archive": "91008",
+      "date": "05.11.2024",
+      "request": "Уверение за положени испити ФИНКИ",
+      "price": 100.00,
+      "paid": "ДА",
+      "document": "Преземи",
+      "payOnline": true,
+      "status": "approved",
+      "comment": ""
+    },
+    {
+      "id": 2,
+      "archive": "91007",
+      "date": "05.11.2024",
+      "request": "УППИ образец",
+      "price": 0.00,
+      "paid": "ДА",
+      "document": "Преземи",
+      "payOnline": false,
+      "status": "approved",
+      "comment": ""
+    },
+    {
+      "id": 3,
+      "archive": "90494",
+      "date": "31.10.2024",
+      "request": "Уверение за редовен студент - ФИНКИ",
+      "price": 0.00,
+      "paid": "ДА",
+      "document": "Преземи",
+      "payOnline": false,
+      "status": "approved",
+      "comment": ""
+    },
+    {
+      "id": 4,
+      "archive": "84239",
+      "date": "10.03.2024",
+      "request": "Уверение за редовен студент - ФИНКИ",
+      "price": 0.00,
+      "paid": "ДА",
+      "document": "Преземи",
+      "payOnline": false,
+      "status": "approved",
+      "comment": ""
+    },
+    {
+      "id": 5,
+      "archive": "84238",
+      "date": "10.03.2024",
+      "request": "Уверение за положени испити ФИНКИ",
+      "price": 100.00,
+      "paid": "ДА",
+      "document": "Преземи",
+      "payOnline": true,
+      "status": "approved",
+      "comment": ""
+    },
+    {
+      "id": 6,
+      "archive": "81891",
+      "date": "12.01.2024",
+      "request": "Уверение за редовен студент - ФИНКИ",
+      "price": 0.00,
+      "paid": "ДА",
+      "document": "Преземи",
+      "payOnline": false,
+      "status": "approved",
+      "comment": ""
+    }
+  ],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 1,
+    "totalRecords": 6,
+    "recordsPerPage": 15
+  },
+  "paymentInfo": "Онлајн плаќањата имаат банкарска провизија за безготовинско плаќање од 1,14% од оригиналната сума (минималната провизија 3,00, максималната 300,00 мкд)"
+}
