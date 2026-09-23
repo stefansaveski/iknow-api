@@ -1,0 +1,45 @@
+######## gradebook WITHOUT index ########
+Sort  (cost=3025.52..3027.18 rows=664 width=73) (actual time=16.122..16.143 rows=684.00 loops=1)
+  Sort Key: s.name, u.surname
+  Sort Method: quicksort  Memory: 81kB
+  Buffers: shared hit=1965 read=152
+  ->  Hash Join  (cost=1699.04..2994.40 rows=664 width=73) (actual time=7.662..14.333 rows=684.00 loops=1)
+        Hash Cond: (ss.subjects_id = s.id)
+        Buffers: shared hit=1962 read=152
+        ->  Hash Join  (cost=1689.29..2979.56 rows=664 width=38) (actual time=7.580..13.939 rows=684.00 loops=1)
+              Hash Cond: (es.user_id = u.id)
+              Buffers: shared hit=1959 read=152
+              ->  Nested Loop Left Join  (cost=1518.59..2807.12 rows=664 width=13) (actual time=6.304..12.389 rows=684.00 loops=1)
+                    Buffers: shared hit=1881 read=152
+                    ->  Hash Join  (cost=1518.30..1978.94 rows=664 width=13) (actual time=6.270..9.008 rows=684.00 loops=1)
+                          Hash Cond: (es.id = ss.enrolled_semesters_id)
+                          Buffers: shared hit=664
+                          ->  Seq Scan on enrolled_semesters es  (cost=0.00..314.00 rows=16000 width=8) (actual time=0.029..1.111 rows=16000.00 loops=1)
+                                Buffers: shared hit=154
+                          ->  Hash  (cost=1510.00..1510.00 rows=664 width=13) (actual time=6.211..6.212 rows=684.00 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 41kB
+                                Buffers: shared hit=510
+                                ->  Seq Scan on semesters_subjects ss  (cost=0.00..1510.00 rows=664 width=13) (actual time=0.038..6.061 rows=684.00 loops=1)
+                                      Filter: (professor_id = 47)
+                                      Rows Removed by Filter: 79316
+                                      Buffers: shared hit=510
+                    ->  Index Only Scan using ix_passed_subjects_enrolled_grade on passed_subjects ps  (cost=0.29..1.25 rows=1 width=8) (actual time=0.005..0.005 rows=0.68 loops=684)
+                          Index Cond: (enrolled_id = ss.id)
+                          Heap Fetches: 0
+                          Index Searches: 684
+                          Buffers: shared hit=1217 read=152
+              ->  Hash  (cost=119.20..119.20 rows=4120 width=33) (actual time=1.225..1.225 rows=4120.00 loops=1)
+                    Buckets: 8192  Batches: 1  Memory Usage: 336kB
+                    Buffers: shared hit=78
+                    ->  Seq Scan on users u  (cost=0.00..119.20 rows=4120 width=33) (actual time=0.013..0.614 rows=4120.00 loops=1)
+                          Buffers: shared hit=78
+        ->  Hash  (cost=6.00..6.00 rows=300 width=22) (actual time=0.073..0.074 rows=300.00 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 25kB
+              Buffers: shared hit=3
+              ->  Seq Scan on subjects s  (cost=0.00..6.00 rows=300 width=22) (actual time=0.011..0.035 rows=300.00 loops=1)
+                    Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=361
+Planning Time: 10.951 ms
+Execution Time: 16.332 ms
+-- OK gradebook.sql

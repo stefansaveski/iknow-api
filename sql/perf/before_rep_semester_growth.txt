@@ -1,0 +1,59 @@
+######## rep_semester_growth ########
+Sort  (cost=14550.91..14551.08 rows=67 width=156) (actual time=117.230..117.233 rows=20.00 loops=1)
+  Sort Key: cur.chrono
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=1026, temp read=361 written=362
+  CTE semester_stats
+    ->  GroupAggregate  (cost=13136.41..14335.26 rows=20 width=40) (actual time=101.227..116.955 rows=20.00 loops=1)
+          Group Key: a.id, (((a.year * 10) + CASE a.type WHEN 'summer'::semester_type THEN 1 ELSE 2 END))
+          Buffers: shared hit=1022, temp read=361 written=362
+          ->  Sort  (cost=13136.41..13336.16 rows=79900 width=28) (actual time=100.465..106.806 rows=80000.00 loops=1)
+                Sort Key: a.id, (((a.year * 10) + CASE a.type WHEN 'summer'::semester_type THEN 1 ELSE 2 END)), es.id
+                Sort Method: external merge  Disk: 2888kB
+                Buffers: shared hit=1022, temp read=361 written=362
+                ->  Hash Left Join  (cost=2132.45..4715.69 rows=79900 width=28) (actual time=13.233..57.501 rows=80000.00 loops=1)
+                      Hash Cond: (ss.id = ps.enrolled_id)
+                      Buffers: shared hit=1022
+                      ->  Hash Right Join  (cost=515.45..2289.69 rows=79900 width=20) (actual time=3.240..33.159 rows=80000.00 loops=1)
+                            Hash Cond: (es.semester_id = a.id)
+                            Buffers: shared hit=665
+                            ->  Hash Right Join  (cost=514.00..2034.06 rows=79900 width=12) (actual time=3.221..21.944 rows=80000.00 loops=1)
+                                  Hash Cond: (ss.enrolled_semesters_id = es.id)
+                                  Buffers: shared hit=664
+                                  ->  Seq Scan on semesters_subjects ss  (cost=0.00..1310.00 rows=80000 width=8) (actual time=0.009..4.461 rows=80000.00 loops=1)
+                                        Buffers: shared hit=510
+                                  ->  Hash  (cost=314.00..314.00 rows=16000 width=8) (actual time=3.159..3.159 rows=16000.00 loops=1)
+                                        Buckets: 16384  Batches: 1  Memory Usage: 753kB
+                                        Buffers: shared hit=154
+                                        ->  Seq Scan on enrolled_semesters es  (cost=0.00..314.00 rows=16000 width=8) (actual time=0.010..1.817 rows=16000.00 loops=1)
+                                              Buffers: shared hit=154
+                            ->  Hash  (cost=1.20..1.20 rows=20 width=12) (actual time=0.015..0.016 rows=20.00 loops=1)
+                                  Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                  Buffers: shared hit=1
+                                  ->  Seq Scan on active_semesters a  (cost=0.00..1.20 rows=20 width=12) (actual time=0.010..0.011 rows=20.00 loops=1)
+                                        Buffers: shared hit=1
+                      ->  Hash  (cost=917.00..917.00 rows=56000 width=8) (actual time=9.895..9.895 rows=56000.00 loops=1)
+                            Buckets: 65536  Batches: 1  Memory Usage: 2700kB
+                            Buffers: shared hit=357
+                            ->  Seq Scan on passed_subjects ps  (cost=0.00..917.00 rows=56000 width=8) (actual time=0.009..4.658 rows=56000.00 loops=1)
+                                  Buffers: shared hit=357
+  ->  Nested Loop Left Join  (cost=0.00..213.62 rows=67 width=156) (actual time=117.030..117.221 rows=20.00 loops=1)
+        Join Filter: ((prev.chrono < cur.chrono) AND (NOT EXISTS(SubPlan 2)))
+        Rows Removed by Join Filter: 381
+        Buffers: shared hit=1026, temp read=361 written=362
+        ->  CTE Scan on semester_stats cur  (cost=0.00..0.40 rows=20 width=36) (actual time=101.230..101.231 rows=20.00 loops=1)
+              Storage: Memory  Maximum Storage: 18kB
+              Buffers: shared hit=1022, temp read=336 written=362
+        ->  CTE Scan on semester_stats prev  (cost=0.00..0.40 rows=20 width=20) (actual time=0.000..0.039 rows=20.00 loops=20)
+              Storage: Memory  Maximum Storage: 18kB
+        SubPlan 2
+          ->  CTE Scan on semester_stats mid  (cost=0.00..0.50 rows=1 width=0) (actual time=0.079..0.079 rows=0.90 loops=190)
+                Filter: ((chrono < cur.chrono) AND (chrono > prev.chrono))
+                Rows Removed by Filter: 8
+                Storage: Memory  Maximum Storage: 18kB
+                Buffers: temp read=25
+Planning:
+  Buffers: shared hit=245
+Planning Time: 7.402 ms
+Execution Time: 124.040 ms
+-- OK explain_rep_semester_growth.sql

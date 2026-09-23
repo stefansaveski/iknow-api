@@ -1,0 +1,143 @@
+######## rep_student_dossier ########
+Sort  (cost=10637.89..10647.89 rows=4000 width=167) (actual time=176.610..176.798 rows=4000.00 loops=1)
+  Sort Key: (COALESCE(ps.credits, '0'::bigint)) DESC, (COALESCE(ps.average_grade, '0'::numeric)) DESC, u.index
+  Sort Method: quicksort  Memory: 597kB
+  Buffers: shared hit=74402
+  ->  Hash Left Join  (cost=10176.52..10398.57 rows=4000 width=167) (actual time=152.524..158.937 rows=4000.00 loops=1)
+        Hash Cond: (u.id = doc.user_id)
+        Buffers: shared hit=74393
+        ->  Hash Left Join  (cost=9941.27..10112.82 rows=4000 width=113) (actual time=148.736..153.409 rows=4000.00 loops=1)
+              Hash Cond: (u.id = pay.user_id)
+              Buffers: shared hit=74374
+              ->  Hash Left Join  (cost=8928.26..9089.30 rows=4000 width=105) (actual time=138.645..142.335 rows=4000.00 loops=1)
+                    Hash Cond: (u.id = pen.user_id)
+                    Buffers: shared hit=74133
+                    ->  Hash Left Join  (cost=5790.89..5941.41 rows=4000 width=97) (actual time=77.269..80.169 rows=4000.00 loops=1)
+                          Hash Cond: (u.id = sem.user_id)
+                          Buffers: shared hit=1266
+                          ->  Hash Left Join  (cost=5226.89..5366.90 rows=4000 width=81) (actual time=72.908..74.881 rows=4000.00 loops=1)
+                                Hash Cond: (u.id = ps.user_id)
+                                Buffers: shared hit=1112
+                                ->  Seq Scan on users u  (cost=0.00..129.50 rows=4000 width=33) (actual time=0.037..1.039 rows=4000.00 loops=1)
+                                      Filter: (role = 'student'::user_role)
+                                      Rows Removed by Filter: 120
+                                      Buffers: shared hit=78
+                                ->  Hash  (cost=5176.89..5176.89 rows=4000 width=52) (actual time=72.852..72.861 rows=4000.00 loops=1)
+                                      Buckets: 4096  Batches: 1  Memory Usage: 267kB
+                                      Buffers: shared hit=1034
+                                      ->  Subquery Scan on ps  (cost=5076.89..5176.89 rows=4000 width=52) (actual time=70.784..72.327 rows=4000.00 loops=1)
+                                            Buffers: shared hit=1034
+                                            ->  HashAggregate  (cost=5076.89..5136.89 rows=4000 width=52) (actual time=70.783..72.102 rows=4000.00 loops=1)
+                                                  Group Key: es.user_id
+                                                  Batches: 1  Memory Usage: 1169kB
+                                                  Buffers: shared hit=1034
+                                                  ->  Hash Join  (cost=2140.75..3956.89 rows=56000 width=16) (actual time=15.224..56.130 rows=56000.00 loops=1)
+                                                        Hash Cond: (ss.subjects_id = s.id)
+                                                        Buffers: shared hit=1024
+                                                        ->  Hash Join  (cost=2131.00..3798.06 rows=56000 width=16) (actual time=15.136..47.841 rows=56000.00 loops=1)
+                                                              Hash Cond: (ss.enrolled_semesters_id = es.id)
+                                                              Buffers: shared hit=1021
+                                                              ->  Hash Join  (cost=1617.00..3137.01 rows=56000 width=16) (actual time=11.114..34.024 rows=56000.00 loops=1)
+                                                                    Hash Cond: (ss.id = ps_1.enrolled_id)
+                                                                    Buffers: shared hit=867
+                                                                    ->  Seq Scan on semesters_subjects ss  (cost=0.00..1310.00 rows=80000 width=12) (actual time=0.013..4.720 rows=80000.00 loops=1)
+                                                                          Buffers: shared hit=510
+                                                                    ->  Hash  (cost=917.00..917.00 rows=56000 width=12) (actual time=10.920..10.921 rows=56000.00 loops=1)
+                                                                          Buckets: 65536  Batches: 1  Memory Usage: 2919kB
+                                                                          Buffers: shared hit=357
+                                                                          ->  Seq Scan on passed_subjects ps_1  (cost=0.00..917.00 rows=56000 width=12) (actual time=0.012..5.112 rows=56000.00 loops=1)
+                                                                                Buffers: shared hit=357
+                                                              ->  Hash  (cost=314.00..314.00 rows=16000 width=8) (actual time=3.863..3.868 rows=16000.00 loops=1)
+                                                                    Buckets: 16384  Batches: 1  Memory Usage: 753kB
+                                                                    Buffers: shared hit=154
+                                                                    ->  Seq Scan on enrolled_semesters es  (cost=0.00..314.00 rows=16000 width=8) (actual time=0.044..1.950 rows=16000.00 loops=1)
+                                                                          Buffers: shared hit=154
+                                                        ->  Hash  (cost=6.00..6.00 rows=300 width=8) (actual time=0.081..0.081 rows=300.00 loops=1)
+                                                              Buckets: 1024  Batches: 1  Memory Usage: 20kB
+                                                              Buffers: shared hit=3
+                                                              ->  Seq Scan on subjects s  (cost=0.00..6.00 rows=300 width=8) (actual time=0.011..0.044 rows=300.00 loops=1)
+                                                                    Buffers: shared hit=3
+                          ->  Hash  (cost=514.00..514.00 rows=4000 width=20) (actual time=4.346..4.347 rows=4000.00 loops=1)
+                                Buckets: 4096  Batches: 1  Memory Usage: 236kB
+                                Buffers: shared hit=154
+                                ->  Subquery Scan on sem  (cost=434.00..514.00 rows=4000 width=20) (actual time=3.189..3.878 rows=4000.00 loops=1)
+                                      Buffers: shared hit=154
+                                      ->  HashAggregate  (cost=434.00..474.00 rows=4000 width=20) (actual time=3.188..3.625 rows=4000.00 loops=1)
+                                            Group Key: es_1.user_id
+                                            Batches: 1  Memory Usage: 409kB
+                                            Buffers: shared hit=154
+                                            ->  Seq Scan on enrolled_semesters es_1  (cost=0.00..314.00 rows=16000 width=16) (actual time=0.025..0.546 rows=16000.00 loops=1)
+                                                  Buffers: shared hit=154
+                    ->  Hash  (cost=3137.36..3137.36 rows=1 width=12) (actual time=61.368..61.370 rows=2000.00 loops=1)
+                          Buckets: 2048 (originally 1024)  Batches: 1 (originally 1)  Memory Usage: 102kB
+                          Buffers: shared hit=72867
+                          ->  Subquery Scan on pen  (cost=3137.33..3137.36 rows=1 width=12) (actual time=57.936..61.155 rows=2000.00 loops=1)
+                                Buffers: shared hit=72867
+                                ->  GroupAggregate  (cost=3137.33..3137.35 rows=1 width=12) (actual time=57.935..61.026 rows=2000.00 loops=1)
+                                      Group Key: es_2.user_id
+                                      Buffers: shared hit=72867
+                                      ->  Sort  (cost=3137.33..3137.34 rows=1 width=8) (actual time=57.929..58.645 rows=24000.00 loops=1)
+                                            Sort Key: es_2.user_id
+                                            Sort Method: quicksort  Memory: 1331kB
+                                            Buffers: shared hit=72867
+                                            ->  Nested Loop  (cost=1617.29..3137.32 rows=1 width=8) (actual time=9.638..54.328 rows=24000.00 loops=1)
+                                                  Buffers: shared hit=72867
+                                                  ->  Hash Left Join  (cost=1617.00..3137.01 rows=1 width=8) (actual time=9.623..26.891 rows=24000.00 loops=1)
+                                                        Hash Cond: (ss_1.id = ps_2.enrolled_id)
+                                                        Filter: (ps_2.id IS NULL)
+                                                        Rows Removed by Filter: 56000
+                                                        Buffers: shared hit=867
+                                                        ->  Seq Scan on semesters_subjects ss_1  (cost=0.00..1310.00 rows=80000 width=8) (actual time=0.010..3.379 rows=80000.00 loops=1)
+                                                              Buffers: shared hit=510
+                                                        ->  Hash  (cost=917.00..917.00 rows=56000 width=8) (actual time=9.527..9.528 rows=56000.00 loops=1)
+                                                              Buckets: 65536  Batches: 1  Memory Usage: 2700kB
+                                                              Buffers: shared hit=357
+                                                              ->  Seq Scan on passed_subjects ps_2  (cost=0.00..917.00 rows=56000 width=8) (actual time=0.008..3.817 rows=56000.00 loops=1)
+                                                                    Buffers: shared hit=357
+                                                  ->  Index Scan using enrolled_semesters_pkey on enrolled_semesters es_2  (cost=0.29..0.31 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=24000)
+                                                        Index Cond: (id = ss_1.enrolled_semesters_id)
+                                                        Index Searches: 24000
+                                                        Buffers: shared hit=72000
+              ->  Hash  (cost=963.01..963.01 rows=4000 width=12) (actual time=10.082..10.084 rows=4000.00 loops=1)
+                    Buckets: 4096  Batches: 1  Memory Usage: 204kB
+                    Buffers: shared hit=241
+                    ->  Subquery Scan on pay  (cost=883.01..963.01 rows=4000 width=12) (actual time=8.528..9.462 rows=4000.00 loops=1)
+                          Buffers: shared hit=241
+                          ->  HashAggregate  (cost=883.01..923.01 rows=4000 width=12) (actual time=8.527..9.090 rows=4000.00 loops=1)
+                                Group Key: es_3.user_id
+                                Batches: 1  Memory Usage: 409kB
+                                Buffers: shared hit=241
+                                ->  Hash Join  (cost=514.00..803.01 rows=16000 width=8) (actual time=2.543..6.386 rows=16000.00 loops=1)
+                                      Hash Cond: (p.enrollment_id = es_3.id)
+                                      Buffers: shared hit=241
+                                      ->  Seq Scan on payment p  (cost=0.00..247.00 rows=16000 width=8) (actual time=0.028..0.788 rows=16000.00 loops=1)
+                                            Buffers: shared hit=87
+                                      ->  Hash  (cost=314.00..314.00 rows=16000 width=8) (actual time=2.503..2.503 rows=16000.00 loops=1)
+                                            Buckets: 16384  Batches: 1  Memory Usage: 753kB
+                                            Buffers: shared hit=154
+                                            ->  Seq Scan on enrolled_semesters es_3  (cost=0.00..314.00 rows=16000 width=8) (actual time=0.007..1.132 rows=16000.00 loops=1)
+                                                  Buffers: shared hit=154
+        ->  Hash  (cost=185.24..185.24 rows=4000 width=20) (actual time=3.710..3.712 rows=4000.00 loops=1)
+              Buckets: 4096  Batches: 1  Memory Usage: 236kB
+              Buffers: shared hit=19
+              ->  Subquery Scan on doc  (cost=105.24..185.24 rows=4000 width=20) (actual time=2.236..3.114 rows=4000.00 loops=1)
+                    Buffers: shared hit=19
+                    ->  HashAggregate  (cost=105.24..145.24 rows=4000 width=20) (actual time=2.235..2.795 rows=4000.00 loops=1)
+                          Group Key: ud.user_id
+                          Batches: 1  Memory Usage: 409kB
+                          Buffers: shared hit=19
+                          ->  Hash Join  (cost=1.18..75.24 rows=4000 width=12) (actual time=0.219..1.218 rows=4000.00 loops=1)
+                                Hash Cond: (ud.document_id = d.id)
+                                Buffers: shared hit=19
+                                ->  Seq Scan on user_documents ud  (cost=0.00..58.00 rows=4000 width=8) (actual time=0.071..0.301 rows=4000.00 loops=1)
+                                      Buffers: shared hit=18
+                                ->  Hash  (cost=1.08..1.08 rows=8 width=8) (actual time=0.042..0.043 rows=8.00 loops=1)
+                                      Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                      Buffers: shared hit=1
+                                      ->  Seq Scan on documents d  (cost=0.00..1.08 rows=8 width=8) (actual time=0.034..0.035 rows=8.00 loops=1)
+                                            Buffers: shared hit=1
+Planning:
+  Buffers: shared hit=550 read=8
+Planning Time: 21.114 ms
+Execution Time: 179.370 ms
+-- OK explain_rep_student_dossier.sql

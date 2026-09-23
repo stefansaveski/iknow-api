@@ -1,0 +1,62 @@
+######## rep_busiest_professor ########
+Sort  (cost=11894.77..11895.22 rows=181 width=68) (actual time=114.617..114.621 rows=20.00 loops=1)
+  Sort Key: a.year, (CASE a.type WHEN 'summer'::semester_type THEN 1 ELSE 2 END)
+  Sort Method: quicksort  Memory: 26kB
+  Buffers: shared hit=1082, temp read=282 written=283
+  CTE professor_load
+    ->  GroupAggregate  (cost=10376.15..11600.15 rows=2400 width=32) (actual time=89.755..109.549 rows=2400.00 loops=1)
+          Group Key: es.semester_id, ss.professor_id
+          Buffers: shared hit=1021, temp read=282 written=283
+          ->  Sort  (cost=10376.15..10576.15 rows=80000 width=20) (actual time=89.732..98.078 rows=80000.00 loops=1)
+                Sort Key: es.semester_id, ss.professor_id, ss.subjects_id
+                Sort Method: external merge  Disk: 2256kB
+                Buffers: shared hit=1021, temp read=282 written=283
+                ->  Hash Left Join  (cost=2131.00..3861.07 rows=80000 width=20) (actual time=16.393..52.460 rows=80000.00 loops=1)
+                      Hash Cond: (ss.id = ps.enrolled_id)
+                      Buffers: shared hit=1021
+                      ->  Hash Join  (cost=514.00..2034.06 rows=80000 width=16) (actual time=3.912..25.189 rows=80000.00 loops=1)
+                            Hash Cond: (ss.enrolled_semesters_id = es.id)
+                            Buffers: shared hit=664
+                            ->  Seq Scan on semesters_subjects ss  (cost=0.00..1310.00 rows=80000 width=16) (actual time=0.009..4.753 rows=80000.00 loops=1)
+                                  Buffers: shared hit=510
+                            ->  Hash  (cost=314.00..314.00 rows=16000 width=8) (actual time=3.839..3.840 rows=16000.00 loops=1)
+                                  Buckets: 16384  Batches: 1  Memory Usage: 753kB
+                                  Buffers: shared hit=154
+                                  ->  Seq Scan on enrolled_semesters es  (cost=0.00..314.00 rows=16000 width=8) (actual time=0.010..2.149 rows=16000.00 loops=1)
+                                        Buffers: shared hit=154
+                      ->  Hash  (cost=917.00..917.00 rows=56000 width=8) (actual time=12.348..12.349 rows=56000.00 loops=1)
+                            Buckets: 65536  Batches: 1  Memory Usage: 2700kB
+                            Buffers: shared hit=357
+                            ->  Seq Scan on passed_subjects ps  (cost=0.00..917.00 rows=56000 width=8) (actual time=0.013..5.624 rows=56000.00 loops=1)
+                                  Buffers: shared hit=357
+  ->  Nested Loop Left Join  (cost=79.73..287.83 rows=181 width=68) (actual time=110.637..114.608 rows=20.00 loops=1)
+        Buffers: shared hit=1082, temp read=282 written=283
+        ->  Hash Right Join  (cost=79.45..204.42 rows=181 width=36) (actual time=110.600..114.535 rows=20.00 loops=1)
+              Hash Cond: (pl.semester_id = a.id)
+              Buffers: shared hit=1022, temp read=282 written=283
+              ->  Hash Anti Join  (cost=78.00..198.12 rows=1811 width=32) (actual time=110.572..114.498 rows=20.00 loops=1)
+                    Hash Cond: (pl.semester_id = pl1.semester_id)
+                    Join Filter: ((pl.enrolled_students < pl1.enrolled_students) OR ((pl.enrolled_students = pl1.enrolled_students) AND (pl.graded_students < pl1.graded_students)) OR ((pl.enrolled_students = pl1.enrolled_students) AND (pl.graded_students = pl1.graded_students) AND (pl.professor_id > pl1.professor_id)))
+                    Rows Removed by Join Filter: 40595
+                    Buffers: shared hit=1021, temp read=282 written=283
+                    ->  CTE Scan on professor_load pl  (cost=0.00..48.00 rows=2400 width=32) (actual time=89.757..89.907 rows=2400.00 loops=1)
+                          Storage: Memory  Maximum Storage: 164kB
+                          Buffers: shared hit=1021, temp read=282 written=283
+                    ->  Hash  (cost=48.00..48.00 rows=2400 width=24) (actual time=20.631..20.631 rows=2400.00 loops=1)
+                          Buckets: 4096  Batches: 1  Memory Usage: 173kB
+                          ->  CTE Scan on professor_load pl1  (cost=0.00..48.00 rows=2400 width=24) (actual time=0.001..20.388 rows=2400.00 loops=1)
+                                Storage: Memory  Maximum Storage: 164kB
+              ->  Hash  (cost=1.20..1.20 rows=20 width=12) (actual time=0.022..0.022 rows=20.00 loops=1)
+                    Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                    Buffers: shared hit=1
+                    ->  Seq Scan on active_semesters a  (cost=0.00..1.20 rows=20 width=12) (actual time=0.015..0.017 rows=20.00 loops=1)
+                          Buffers: shared hit=1
+        ->  Index Scan using users_pkey on users u  (cost=0.28..0.45 rows=1 width=26) (actual time=0.003..0.003 rows=1.00 loops=20)
+              Index Cond: (id = pl.professor_id)
+              Index Searches: 20
+              Buffers: shared hit=60
+Planning:
+  Buffers: shared hit=276
+Planning Time: 10.957 ms
+Execution Time: 121.914 ms
+-- OK explain_rep_busiest_professor.sql

@@ -1,0 +1,94 @@
+######## rep_subject_pass_rate ########
+Sort  (cost=12503.55..12505.05 rows=600 width=146) (actual time=154.481..154.698 rows=6000.00 loops=1)
+  Sort Key: a.year, a.type, (round(((100.0 * ((count(ps.id)))::numeric) / ((count(ss.id)))::numeric), 1)) DESC, s.code
+  Sort Method: quicksort  Memory: 747kB
+  Buffers: shared hit=2577
+  ->  Hash Left Join  (cost=12288.43..12475.86 rows=600 width=146) (actual time=131.644..140.919 rows=6000.00 loops=1)
+        Hash Cond: (ss.subjects_id = sa.subject_id)
+        Buffers: shared hit=2566
+        ->  Hash Left Join  (cost=8300.17..8471.00 rows=600 width=86) (actual time=96.448..102.055 rows=6000.00 loops=1)
+              Hash Cond: ((ss.subjects_id = sps.subject_id) AND (es.semester_id = sps.semester_id))
+              Buffers: shared hit=1699
+              ->  Hash Join  (cost=5672.27..5839.95 rows=600 width=82) (actual time=69.495..73.840 rows=6000.00 loops=1)
+                    Hash Cond: (ss.subjects_id = s.id)
+                    Buffers: shared hit=1035
+                    ->  Hash Join  (cost=5662.52..5828.60 rows=600 width=64) (actual time=69.356..72.693 rows=6000.00 loops=1)
+                          Hash Cond: (es.semester_id = a.id)
+                          Buffers: shared hit=1032
+                          ->  HashAggregate  (cost=5661.07..5751.07 rows=6000 width=56) (actual time=69.338..71.731 rows=6000.00 loops=1)
+                                Group Key: ss.subjects_id, es.semester_id
+                                Batches: 1  Memory Usage: 1169kB
+                                Buffers: shared hit=1031
+                                ->  Hash Left Join  (cost=2131.00..3861.07 rows=80000 width=20) (actual time=15.669..48.617 rows=80000.00 loops=1)
+                                      Hash Cond: (ss.id = ps.enrolled_id)
+                                      Buffers: shared hit=1021
+                                      ->  Hash Join  (cost=514.00..2034.06 rows=80000 width=12) (actual time=4.269..23.426 rows=80000.00 loops=1)
+                                            Hash Cond: (ss.enrolled_semesters_id = es.id)
+                                            Buffers: shared hit=664
+                                            ->  Seq Scan on semesters_subjects ss  (cost=0.00..1310.00 rows=80000 width=12) (actual time=0.007..4.131 rows=80000.00 loops=1)
+                                                  Buffers: shared hit=510
+                                            ->  Hash  (cost=314.00..314.00 rows=16000 width=8) (actual time=4.199..4.200 rows=16000.00 loops=1)
+                                                  Buckets: 16384  Batches: 1  Memory Usage: 753kB
+                                                  Buffers: shared hit=154
+                                                  ->  Seq Scan on enrolled_semesters es  (cost=0.00..314.00 rows=16000 width=8) (actual time=0.011..2.333 rows=16000.00 loops=1)
+                                                        Buffers: shared hit=154
+                                      ->  Hash  (cost=917.00..917.00 rows=56000 width=12) (actual time=11.266..11.266 rows=56000.00 loops=1)
+                                            Buckets: 65536  Batches: 1  Memory Usage: 2919kB
+                                            Buffers: shared hit=357
+                                            ->  Seq Scan on passed_subjects ps  (cost=0.00..917.00 rows=56000 width=12) (actual time=0.014..5.114 rows=56000.00 loops=1)
+                                                  Buffers: shared hit=357
+                          ->  Hash  (cost=1.20..1.20 rows=20 width=12) (actual time=0.014..0.015 rows=20.00 loops=1)
+                                Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                Buffers: shared hit=1
+                                ->  Seq Scan on active_semesters a  (cost=0.00..1.20 rows=20 width=12) (actual time=0.009..0.011 rows=20.00 loops=1)
+                                      Buffers: shared hit=1
+                    ->  Hash  (cost=6.00..6.00 rows=300 width=22) (actual time=0.080..0.080 rows=300.00 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 25kB
+                          Buffers: shared hit=3
+                          ->  Seq Scan on subjects s  (cost=0.00..6.00 rows=300 width=22) (actual time=0.017..0.043 rows=300.00 loops=1)
+                                Buffers: shared hit=3
+              ->  Hash  (cost=2537.91..2537.91 rows=6000 width=16) (actual time=26.921..26.922 rows=6000.00 loops=1)
+                    Buckets: 8192  Batches: 1  Memory Usage: 346kB
+                    Buffers: shared hit=664
+                    ->  Subquery Scan on sps  (cost=2417.91..2537.91 rows=6000 width=16) (actual time=25.227..26.223 rows=6000.00 loops=1)
+                          Buffers: shared hit=664
+                          ->  HashAggregate  (cost=2417.91..2477.91 rows=6000 width=16) (actual time=25.226..25.820 rows=6000.00 loops=1)
+                                Group Key: ss_1.subjects_id, es_1.semester_id
+                                Batches: 1  Memory Usage: 409kB
+                                Buffers: shared hit=664
+                                ->  Hash Join  (cost=514.00..1978.01 rows=58653 width=12) (actual time=2.774..16.440 rows=58801.00 loops=1)
+                                      Hash Cond: (ss_1.enrolled_semesters_id = es_1.id)
+                                      Buffers: shared hit=664
+                                      ->  Seq Scan on semesters_subjects ss_1  (cost=0.00..1310.00 rows=58653 width=12) (actual time=0.017..5.812 rows=58801.00 loops=1)
+                                            Filter: signature
+                                            Rows Removed by Filter: 21199
+                                            Buffers: shared hit=510
+                                      ->  Hash  (cost=314.00..314.00 rows=16000 width=8) (actual time=2.702..2.703 rows=16000.00 loops=1)
+                                            Buckets: 16384  Batches: 1  Memory Usage: 753kB
+                                            Buffers: shared hit=154
+                                            ->  Seq Scan on enrolled_semesters es_1  (cost=0.00..314.00 rows=16000 width=8) (actual time=0.007..1.336 rows=16000.00 loops=1)
+                                                  Buffers: shared hit=154
+        ->  Hash  (cost=3984.51..3984.51 rows=300 width=36) (actual time=35.177..35.178 rows=300.00 loops=1)
+              Buckets: 1024  Batches: 1  Memory Usage: 21kB
+              Buffers: shared hit=867
+              ->  Subquery Scan on sa  (cost=3977.01..3984.51 rows=300 width=36) (actual time=34.994..35.139 rows=300.00 loops=1)
+                    Buffers: shared hit=867
+                    ->  HashAggregate  (cost=3977.01..3981.51 rows=300 width=36) (actual time=34.993..35.095 rows=300.00 loops=1)
+                          Group Key: ss_2.subjects_id
+                          Batches: 1  Memory Usage: 80kB
+                          Buffers: shared hit=867
+                          ->  Hash Join  (cost=1617.00..3137.01 rows=56000 width=8) (actual time=9.870..24.436 rows=56000.00 loops=1)
+                                Hash Cond: (ss_2.id = ps_1.enrolled_id)
+                                Buffers: shared hit=867
+                                ->  Seq Scan on semesters_subjects ss_2  (cost=0.00..1310.00 rows=80000 width=8) (actual time=0.015..2.704 rows=80000.00 loops=1)
+                                      Buffers: shared hit=510
+                                ->  Hash  (cost=917.00..917.00 rows=56000 width=8) (actual time=9.613..9.613 rows=56000.00 loops=1)
+                                      Buckets: 65536  Batches: 1  Memory Usage: 2700kB
+                                      Buffers: shared hit=357
+                                      ->  Seq Scan on passed_subjects ps_1  (cost=0.00..917.00 rows=56000 width=8) (actual time=0.012..3.997 rows=56000.00 loops=1)
+                                            Buffers: shared hit=357
+Planning:
+  Buffers: shared hit=416 read=8
+Planning Time: 11.797 ms
+Execution Time: 156.015 ms
+-- OK explain_rep_subject_pass_rate.sql

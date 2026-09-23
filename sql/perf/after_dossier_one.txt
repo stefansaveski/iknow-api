@@ -1,0 +1,118 @@
+######## dossier_one ########
+Sort  (cost=260.44..260.44 rows=1 width=167) (actual time=0.869..0.872 rows=1.00 loops=1)
+  Sort Key: (COALESCE((sum(s.awarded_credits)), '0'::bigint)) DESC, (COALESCE((round(avg(((ps.grade)::text)::integer), 2)), '0'::numeric)) DESC, u.index
+  Sort Method: quicksort  Memory: 25kB
+  Buffers: shared hit=188 read=4
+  ->  Nested Loop Left Join  (cost=23.45..260.43 rows=1 width=167) (actual time=0.841..0.846 rows=1.00 loops=1)
+        Buffers: shared hit=179 read=4
+        ->  Nested Loop Left Join  (cost=19.14..254.96 rows=1 width=113) (actual time=0.729..0.733 rows=1.00 loops=1)
+              Buffers: shared hit=175 read=4
+              ->  Nested Loop Left Join  (cost=14.54..203.24 rows=1 width=105) (actual time=0.300..0.303 rows=1.00 loops=1)
+                    Buffers: shared hit=161
+                    ->  Nested Loop Left Join  (cost=9.64..116.19 rows=1 width=97) (actual time=0.246..0.249 rows=1.00 loops=1)
+                          Buffers: shared hit=95
+                          ->  Nested Loop Left Join  (cost=5.33..97.71 rows=1 width=81) (actual time=0.231..0.233 rows=1.00 loops=1)
+                                Buffers: shared hit=89
+                                ->  Index Scan using users_pkey on users u  (cost=0.28..8.30 rows=1 width=33) (actual time=0.013..0.014 rows=1.00 loops=1)
+                                      Index Cond: (id = 2500)
+                                      Filter: (role = 'student'::user_role)
+                                      Index Searches: 1
+                                      Buffers: shared hit=3
+                                ->  GroupAggregate  (cost=5.05..89.39 rows=1 width=52) (actual time=0.216..0.217 rows=1.00 loops=1)
+                                      Buffers: shared hit=86
+                                      ->  Nested Loop  (cost=5.05..89.13 rows=14 width=16) (actual time=0.078..0.175 rows=8.00 loops=1)
+                                            Buffers: shared hit=82
+                                            ->  Nested Loop  (cost=4.90..86.81 rows=14 width=16) (actual time=0.074..0.160 rows=8.00 loops=1)
+                                                  Buffers: shared hit=66
+                                                  ->  Nested Loop  (cost=4.61..80.15 rows=20 width=12) (actual time=0.055..0.102 rows=20.00 loops=1)
+                                                        Buffers: shared hit=18
+                                                        ->  Bitmap Heap Scan on enrolled_semesters es  (cost=4.32..18.43 rows=4 width=8) (actual time=0.039..0.052 rows=4.00 loops=1)
+                                                              Recheck Cond: (user_id = 2500)
+                                                              Heap Blocks: exact=4
+                                                              Buffers: shared hit=6
+                                                              ->  Bitmap Index Scan on enrolled_semesters_user_id_semester_id_key  (cost=0.00..4.32 rows=4 width=0) (actual time=0.018..0.018 rows=4.00 loops=1)
+                                                                    Index Cond: (user_id = 2500)
+                                                                    Index Searches: 1
+                                                                    Buffers: shared hit=2
+                                                        ->  Index Scan using semesters_subjects_enrolled_semesters_id_subjects_id_key on semesters_subjects ss  (cost=0.29..15.38 rows=5 width=12) (actual time=0.011..0.011 rows=5.00 loops=4)
+                                                              Index Cond: (enrolled_semesters_id = es.id)
+                                                              Index Searches: 4
+                                                              Buffers: shared hit=12
+                                                  ->  Index Scan using passed_subjects_enrolled_id_key on passed_subjects ps  (cost=0.29..0.33 rows=1 width=12) (actual time=0.003..0.003 rows=0.40 loops=20)
+                                                        Index Cond: (enrolled_id = ss.id)
+                                                        Index Searches: 20
+                                                        Buffers: shared hit=48
+                                            ->  Index Scan using subjects_pkey on subjects s  (cost=0.15..0.17 rows=1 width=8) (actual time=0.001..0.001 rows=1.00 loops=8)
+                                                  Index Cond: (id = ss.subjects_id)
+                                                  Index Searches: 8
+                                                  Buffers: shared hit=16
+                          ->  GroupAggregate  (cost=4.32..18.46 rows=1 width=20) (actual time=0.015..0.015 rows=1.00 loops=1)
+                                Buffers: shared hit=6
+                                ->  Bitmap Heap Scan on enrolled_semesters es_1  (cost=4.32..18.43 rows=4 width=16) (actual time=0.012..0.013 rows=4.00 loops=1)
+                                      Recheck Cond: (user_id = 2500)
+                                      Heap Blocks: exact=4
+                                      Buffers: shared hit=6
+                                      ->  Bitmap Index Scan on enrolled_semesters_user_id_semester_id_key  (cost=0.00..4.32 rows=4 width=0) (actual time=0.005..0.005 rows=4.00 loops=1)
+                                            Index Cond: (user_id = 2500)
+                                            Index Searches: 1
+                                            Buffers: shared hit=2
+                    ->  GroupAggregate  (cost=4.90..87.03 rows=1 width=12) (actual time=0.053..0.054 rows=1.00 loops=1)
+                          Buffers: shared hit=66
+                          ->  Nested Loop Left Join  (cost=4.90..87.01 rows=1 width=8) (actual time=0.027..0.052 rows=12.00 loops=1)
+                                Filter: (ps_1.id IS NULL)
+                                Rows Removed by Filter: 8
+                                Buffers: shared hit=66
+                                ->  Nested Loop  (cost=4.61..80.15 rows=20 width=8) (actual time=0.014..0.023 rows=20.00 loops=1)
+                                      Buffers: shared hit=18
+                                      ->  Bitmap Heap Scan on enrolled_semesters es_2  (cost=4.32..18.43 rows=4 width=8) (actual time=0.010..0.012 rows=4.00 loops=1)
+                                            Recheck Cond: (user_id = 2500)
+                                            Heap Blocks: exact=4
+                                            Buffers: shared hit=6
+                                            ->  Bitmap Index Scan on enrolled_semesters_user_id_semester_id_key  (cost=0.00..4.32 rows=4 width=0) (actual time=0.006..0.006 rows=4.00 loops=1)
+                                                  Index Cond: (user_id = 2500)
+                                                  Index Searches: 1
+                                                  Buffers: shared hit=2
+                                      ->  Index Scan using semesters_subjects_enrolled_semesters_id_subjects_id_key on semesters_subjects ss_1  (cost=0.29..15.38 rows=5 width=8) (actual time=0.002..0.002 rows=5.00 loops=4)
+                                            Index Cond: (enrolled_semesters_id = es_2.id)
+                                            Index Searches: 4
+                                            Buffers: shared hit=12
+                                ->  Index Scan using passed_subjects_enrolled_id_key on passed_subjects ps_1  (cost=0.29..0.33 rows=1 width=8) (actual time=0.001..0.001 rows=0.40 loops=20)
+                                      Index Cond: (enrolled_id = ss_1.id)
+                                      Index Searches: 20
+                                      Buffers: shared hit=48
+              ->  GroupAggregate  (cost=4.60..51.70 rows=1 width=12) (actual time=0.428..0.428 rows=1.00 loops=1)
+                    Buffers: shared hit=14 read=4
+                    ->  Nested Loop  (cost=4.60..51.68 rows=4 width=8) (actual time=0.299..0.426 rows=4.00 loops=1)
+                          Buffers: shared hit=14 read=4
+                          ->  Bitmap Heap Scan on enrolled_semesters es_3  (cost=4.32..18.43 rows=4 width=8) (actual time=0.058..0.061 rows=4.00 loops=1)
+                                Recheck Cond: (user_id = 2500)
+                                Heap Blocks: exact=4
+                                Buffers: shared hit=6
+                                ->  Bitmap Index Scan on enrolled_semesters_user_id_semester_id_key  (cost=0.00..4.32 rows=4 width=0) (actual time=0.047..0.047 rows=4.00 loops=1)
+                                      Index Cond: (user_id = 2500)
+                                      Index Searches: 1
+                                      Buffers: shared hit=2
+                          ->  Index Scan using ix_payment_enrollment on payment p  (cost=0.29..8.30 rows=1 width=8) (actual time=0.090..0.090 rows=1.00 loops=4)
+                                Index Cond: (enrollment_id = es_3.id)
+                                Index Searches: 4
+                                Buffers: shared hit=8 read=4
+        ->  GroupAggregate  (cost=4.31..5.44 rows=1 width=20) (actual time=0.105..0.106 rows=1.00 loops=1)
+              Buffers: shared hit=4
+              ->  Hash Join  (cost=4.31..5.42 rows=1 width=12) (actual time=0.103..0.105 rows=1.00 loops=1)
+                    Hash Cond: (d.id = ud.document_id)
+                    Buffers: shared hit=4
+                    ->  Seq Scan on documents d  (cost=0.00..1.08 rows=8 width=8) (actual time=0.009..0.009 rows=8.00 loops=1)
+                          Buffers: shared hit=1
+                    ->  Hash  (cost=4.30..4.30 rows=1 width=8) (actual time=0.088..0.088 rows=1.00 loops=1)
+                          Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                          Buffers: shared hit=3
+                          ->  Index Only Scan using user_documents_pkey on user_documents ud  (cost=0.28..4.30 rows=1 width=8) (actual time=0.080..0.081 rows=1.00 loops=1)
+                                Index Cond: (user_id = 2500)
+                                Heap Fetches: 0
+                                Index Searches: 1
+                                Buffers: shared hit=3
+Planning:
+  Buffers: shared hit=563
+Planning Time: 17.012 ms
+Execution Time: 1.067 ms
+-- OK explain_dossier_one.sql
