@@ -289,15 +289,11 @@ namespace iknow_api.Data
                 e.ToTable("payment", ProjectSchema);
                 e.HasKey(p => p.Id);
                 e.Property(p => p.Id).HasColumnName("id");
-                e.Property(p => p.UserId).HasColumnName("user_id");
                 e.Property(p => p.EnrollmentInfoId).HasColumnName("enrollment_id");
                 e.Property(p => p.Amount).HasColumnName("amount");
 
-                e.HasOne(p => p.User)
-                 .WithMany(u => u.Payments)
-                 .HasForeignKey(p => p.UserId)
-                 .OnDelete(DeleteBehavior.Cascade);
-
+                // No user_id: the student comes from the enrolment. Removing it
+                // was the BCNF fix from Phase 5 (enrolled_id -> user_id).
                 e.HasOne(p => p.EnrolledSemesters)
                  .WithMany(es => es.Users)
                  .HasForeignKey(p => p.EnrollmentInfoId)

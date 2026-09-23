@@ -27,9 +27,6 @@ namespace iknow_api.Models
         public ContactInfo? ContactInfo { get; set; }
         public ICollection<UserDocuments>? Documents { get; set; }
 
-        // Named for the relationship it carries: Users 1 --pays-- N Payment.
-        public ICollection<Payment>? Payments { get; set; }
-
         // Users 1 --submits-- N EnrolledSemesters
         public ICollection<EnrolledSemesters>? Enrolments { get; set; }
 
