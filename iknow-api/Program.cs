@@ -65,7 +65,11 @@ builder.Services.AddOpenApi();
 // The enum labels come from sql/ddl.sql, so each CLR enum is mapped onto its
 // Postgres type by name; PgEnumLabels covers the members whose label is not
 // simply the lowercased member name.
-builder.Services.AddDbContext<AppDbContext>(options =>
+// AddDbContextPool reuses the DbContext instances themselves; the connections
+// underneath them are pooled separately by Npgsql, sized in the connection
+// string. Both matter here because every physical connection is one more
+// channel through the SSH tunnel.
+builder.Services.AddDbContextPool<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         npgsql =>
